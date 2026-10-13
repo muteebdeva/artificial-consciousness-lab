@@ -74,45 +74,9 @@ registered in [research/research_thesis.md](research/research_thesis.md) and
 The engine runs a 15-stage cognitive cycle ([src/consciousness_lab/core/loop.py](src/consciousness_lab/core/loop.py)).
 Every stage is real, tested code — nothing in this diagram is aspirational.
 
-```mermaid
-flowchart TD
-    OBS([Observation<br/>text / structured]) --> P["1 · Perception<br/>+ budget check"]
-    P --> EP["1b · Episodic record"]
-    P --> CAND["2 · Candidates<br/>working mem · episodic recall<br/>semantic query · goals · self-model"]
-    EP --> CAND
-    CAND --> ATT["3 · Attention<br/>task-relevant prioritization"]
-    ATT --> WS["4 · Workspace selection<br/>capacity-limited competition"]
-    WS --> BC["5 · Broadcast<br/>to all modules"]
-    BC --> CD["6 · Contradiction detection"]
-    CD --> CE["7 · Confidence estimation"]
-    CE --> PLAN["8 · Planning<br/>bounded, budgeted"]
-    PLAN --> GATE["9 · Approval gate<br/>human authorization"]
-    GATE --> EXE["10 · Execution<br/>via provider"]
-    EXE --> PRED["11 · Record predictions"]
-    PRED --> SM["12 · Self-model update<br/>from observed state only"]
-    SM --> LEARN["13 · Learning<br/>strategy + retrieval update"]
-    LEARN --> AUD["14 · Audit log<br/>append-only"]
-    AUD --> RES([Cycle result])
-
-    subgraph PERS["Persistence"]
-        DB[("SQLite · WAL<br/>versioned schema")]
-    end
-    EP -.-> DB
-    SM -.-> DB
-    AUD -.-> DB
-
-    subgraph SAFE["Safety controls"]
-        BUDGETS["step / token / time budgets"]
-        PERMS["tool allowlist · default-deny"]
-    end
-    P -.-> BUDGETS
-    GATE -.-> PERMS
-
-    subgraph PROV["Provider abstraction"]
-        MODELS["mock · ollama<br/>openai-compatible · gemini"]
-    end
-    EXE -.-> MODELS
-```
+<p align="center">
+  <img src="docs/assets/architecture.svg" alt="The 15-stage cognitive loop: perception, candidate assembly, attention, workspace selection, broadcast, contradiction detection, confidence estimation, planning, approval gate, execution, prediction recording, self-model update, learning, audit, and cycle result, with SQLite persistence, safety controls, and provider abstraction" width="100%">
+</p>
 
 Full interface contract: [INTERFACES.md](INTERFACES.md). Design rationale:
 [docs/architecture.md](docs/architecture.md) · [docs/design_decisions.md](docs/design_decisions.md).
@@ -155,13 +119,15 @@ calibration error (ECE), self-model accuracy, goal-progress preservation.
 
 ## Results
 
-> Provider: **deterministic mock** · Config: `configs/mock.yaml` · Seeds: fixed ·
-> Date: 2026-10-13 · Full per-trial data: [experiments/results/](experiments/results/)
+### Mock-provider pipeline validation
+
+> Provider: **deterministic mock** (scripted by construction) · Config: `configs/mock.yaml` ·
+> Seeds: fixed · Date: 2026-10-13 · Full per-trial data: [experiments/results/](experiments/results/)
 >
-> These runs validate the **measurement pipeline**. The mock's behavior is
-> scripted by construction, so they are **not** evidence of improved cognition
-> and say nothing about consciousness. Architectural signal requires
-> real-provider runs (planned, not yet executed).
+> These runs validate the **measurement pipeline only**. They are **not** evidence of
+> improved cognition, architectural superiority, or anything about consciousness.
+> Genuine architectural signal requires real-provider runs, which have **not**
+> been executed.
 
 | Protocol | Full (mock) | Baseline (mock) | Ablation signal | Limitation |
 |---|---|---|---|---|
@@ -176,12 +142,18 @@ calibration error (ECE), self-model accuracy, goal-progress preservation.
 | 09 · Robustness to misleading input | flag rate 0.00 | 0.00 | — | Heuristic limits; all conditions identical |
 | 10 · Component ablation | identical across conditions | — | — | Honest pipeline finding: task bypasses ablated components |
 
-**What this means.** Protocol 04 is the one experiment routed through the real
+**Reading this table.** Protocol 04 is the one experiment routed through the real
 memory→detector pathway, and it shows exactly the predicted ablation pattern —
 the pipeline can detect component contributions when the task actually uses the
 components. Everything else is pipeline validation awaiting real providers.
 Null results are reported with the same prominence as positive ones, per the
 preregistration rules.
+
+### Not yet run
+
+- **Real-provider experiments** (Ollama / Gemini) — planned; no results exist.
+- **Pre-registered confirmatory run** (n≥30/condition, permutation test, α=0.05) — planned.
+- Until these run, H1 remains an **untested hypothesis**, not a finding.
 
 ---
 

@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1028" viewBox="0 0 1200 1028" role="img" aria-labelledby="archTitle archDesc">
+<title id="archTitle">Cognitive loop architecture</title>
+<desc id="archDesc">The 15-stage cognitive cycle: perception, candidate assembly, attention, workspace selection, broadcast, contradiction detection, confidence estimation, planning, approval gate, execution, prediction recording, self-model update, learning, audit, and cycle result. Side panels show SQLite persistence, safety controls, and the provider abstraction.</desc>
+<defs><linearGradient id="num" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38bdf8"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs>
+<rect width="1200" height="1028" fill="#0b0f16"/>
+<g font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+<text x="600" y="34" text-anchor="middle" font-size="22" font-weight="700" fill="#f1f5f9" letter-spacing="3">COGNITIVE LOOP</text>
+<text x="600" y="58" text-anchor="middle" font-size="13" fill="#94a3b8">15 stages · every run · budgets and audit enforced throughout</text>
+<text x="352" y="551" text-anchor="end" font-size="11" letter-spacing="2" fill="#38bdf8" opacity="0.85" dominant-baseline="middle">INTAKE</text>
+<text x="352" y="281" text-anchor="end" font-size="11" letter-spacing="2" fill="#a78bfa" opacity="0.85" dominant-baseline="middle">SELECTION</text>
+<text x="352" y="425" text-anchor="end" font-size="11" letter-spacing="2" fill="#38bdf8" opacity="0.85" dominant-baseline="middle">EVALUATION</text>
+<text x="352" y="560" text-anchor="end" font-size="11" letter-spacing="2" fill="#a78bfa" opacity="0.85" dominant-baseline="middle">ACTION</text>
+<text x="352" y="722" text-anchor="end" font-size="11" letter-spacing="2" fill="#38bdf8" opacity="0.85" dominant-baseline="middle">REFLECTION</text>
+<text x="352" y="857" text-anchor="end" font-size="11" letter-spacing="2" fill="#64748b" opacity="0.85" dominant-baseline="middle">CLOSE</text>
+<rect x="370" y="90" width="460" height="40" rx="8" fill="#141c2a" stroke="#2a3a55"/>
+<rect x="380" y="98" width="34" height="24" rx="6" fill="url(#num)"/>
+<text x="397" y="115" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0f16">1</text>
+<text x="424" y="115" font-size="14" fill="#e2e8f0">Perception + budget check</text>
+<line x1="600" y1="130" x2="600" y2="144" stroke="#38bdf8" stroke-width="2" opacity="0.55"/>
+<polygon points="595,137 605,137 600,144" fill="#38bdf8" opacity="0.8"/>
+<rect x="370" y="144" width="460" height="40" rx="8" fill="#141c2a" stroke="#2a3a55"/>
+<rect x="380" y="152" width="34" height="24" rx="6" fill="url(#num)"/>
+<text x="397" y="169" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0f16">1b</text>
+<text x="424" y="169" font-size="14" fill="#e2e8f0">Episodic record of observation</text>
+<line x1="600" y1="184" x2="600" y2="198" stroke="#38bdf8" stroke-width="2" opacity="0.55"/>
+<polygon points="595,191 605,191 600,198" fill="#38bdf8" opacity="0.8"/>
+<rect x="370" y="198" width="460" height="58" rx="8" fill="#141c2a" stroke="#2a3a55"/>
+<rect x="380" y="215" width="34" height="24" rx="6" fill="url(#num)"/>
+<text x="397" y="232" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0f16">2</text>
+<text x="424" y="222" font-size="14" font-weight="600" fill="#e2e8f0">Candidate assembly</text>
+<text x="424" y="241" font-size="12.5" fill="#94a3b8">working mem · episodic · semantic · goals · self-model</text>
+<line x1="600" y1="256" x2="600" y2="270" stroke="#38bdf8" stroke-width="2" opacity="0.55"/>
+<polygon points="595,263 605,263 600,270" fill="#38bdf8" opacity="0.8"/>
+<rect x="370" y="270" width="460" height="40" rx="8" fill="#141c2a" stroke="#2a3a55"/>
+<rect x="380" y="278" width="34" height="24" rx="6" fill="url(#num)"/>
+<text x="397" y="295" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0f16">3</text>
+<text x="424" y="295" font-size="14" fill="#e2e8f0">Attention  —  task-relevant prioritization</text>
+<line x1="600" y1="310" x2="600" y2="324" stroke="#38bdf8" stroke-width="2" opacity="0.55"/>
+<polygon points="595,317 605,317 600,324" fill="#38bdf8" opacity="0.8"/>
+<rect x="370" y="324" width="460" height="40" rx="8" fill="#141c2a" stroke="#2a3a55"/>
+<rect x="380" y="332" width="34" height="24" rx="6" fill="url(#num)"/>
+<text x="397" y="349" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0f16">4</text>
+<text x="424" y="349" font-size="14" fill="#e2e8f0">Workspace selection  —  capacity-limited</text>
+<line x1="600" y1="364" x2="600" y2="378" stroke="#38bdf8" stroke-width="2" opacity="0.55"/>
+<polygon points="595,371 605,371 600,378" fill="#38bdf8" opacity="0.8"/>
+<rect x="370" y="378" width="460" height="40" rx="8" fill="#141c2a" stroke="#2a3a55"/>
+<rect x="380" y="386" width="34" height="24" rx="6" fill="url(#num)"/>
+<text x="397" y="403" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0f16">5</text>
+<text x="424" y="403" font-size="14" fill="#e2e8f0">Broadcast to all modules</text>
+<line x1="600" y1="418" x2="600" y2="432" stroke="#38bdf8" stroke-width="2" opacity="0.55"/>
+<polygon points="595,425 605,425 600,432" fill="#38bdf8" opacity="0.8"/>
+<rect x="370" y="432" width="460" height="40" rx="8" fill="#141c2a" stroke="#2a3a55"/>
+<rect x="380" y="440" width="34" height="24" rx="6" fill="url(#num)"/>
+<text x="397" y="457" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0f16">6</text>
+<text x="424" y="457" font-size="14" fill="#e2e8f0">Contradiction detection</text>
+<line x1="600" y1="472" x2="600" y2="486" stroke="#38bdf8" stroke-width="2" opacity="0.55"/>
+<polygon points="595,479 605,479 600,486" fill="#38bdf8" opacity="0.8"/>
+<rect x="370" y="486" width="460" height="40" rx="8" fill="#141c2a" stroke="#2a3a55"/>
+<rect x="380" y="494" width="34" height="24" rx="6" fill="url(#num)"/>
+<text x="397" y="511" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0f16">7</text>
+<text x="424" y="511" font-size="14" fill="#e2e8f0">Confidence estimation</text>
+<line x1="600" y1="526" x2="600" y2="540" stroke="#38bdf8" stroke-width="2" opacity="0.55"/>
+<polygon points="595,533 605,533 600,540" fill="#38bdf8" opacity="0.8"/>
+<rect x="370" y="540" width="460" height="40" rx="8" fill="#141c2a" stroke="#2a3a55"/>
+<rect x="380" y="548" width="34" height="24" rx="6" fill="url(#num)"/>
+<text x="397" y="565" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0f16">8</text>
+<text x="424" y="565" font-size="14" fill="#e2e8f0">Planning  —  bounded, budgeted</text>
+<line x1="600" y1="580" x2="600" y2="594" stroke="#38bdf8" stroke-width="2" opacity="0.55"/>
+<polygon points="595,587 605,587 600,594" fill="#38bdf8" opacity="0.8"/>
+<rect x="370" y="594" width="460" height="40" rx="8" fill="#141c2a" stroke="#2a3a55"/>
+<rect x="380" y="602" width="34" height="24" rx="6" fill="url(#num)"/>
+<text x="397" y="619" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0f16">9</text>
+<text x="424" y="619" font-size="14" fill="#e2e8f0">Approval gate  —  human authorization</text>
+<line x1="600" y1="634" x2="600" y2="648" stroke="#38bdf8" stroke-width="2" opacity="0.55"/>
+<polygon points="595,641 605,641 600,648" fill="#38bdf8" opacity="0.8"/>
+<rect x="370" y="648" width="460" height="40" rx="8" fill="#141c2a" stroke="#2a3a55"/>
+<rect x="380" y="656" width="34" height="24" rx="6" fill="url(#num)"/>
+<text x="397" y="673" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0f16">10</text>
+<text x="424" y="673" font-size="14" fill="#e2e8f0">Execution via provider</text>
+<line x1="600" y1="688" x2="600" y2="702" stroke="#38bdf8" stroke-width="2" opacity="0.55"/>
+<polygon points="595,695 605,695 600,702" fill="#38bdf8" opacity="0.8"/>
+<rect x="370" y="702" width="460" height="40" rx="8" fill="#141c2a" stroke="#2a3a55"/>
+<rect x="380" y="710" width="34" height="24" rx="6" fill="url(#num)"/>
+<text x="397" y="727" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0f16">11</text>
+<text x="424" y="727" font-size="14" fill="#e2e8f0">Record predictions</text>
+<line x1="600" y1="742" x2="600" y2="756" stroke="#38bdf8" stroke-width="2" opacity="0.55"/>
+<polygon points="595,749 605,749 600,756" fill="#38bdf8" opacity="0.8"/>
+<rect x="370" y="756" width="460" height="40" rx="8" fill="#141c2a" stroke="#2a3a55"/>
+<rect x="380" y="764" width="34" height="24" rx="6" fill="url(#num)"/>
+<text x="397" y="781" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0f16">12</text>
+<text x="424" y="781" font-size="14" fill="#e2e8f0">Self-model update  —  from observed state only</text>
+<line x1="600" y1="796" x2="600" y2="810" stroke="#38bdf8" stroke-width="2" opacity="0.55"/>
+<polygon points="595,803 605,803 600,810" fill="#38bdf8" opacity="0.8"/>
+<rect x="370" y="810" width="460" height="40" rx="8" fill="#141c2a" stroke="#2a3a55"/>
+<rect x="380" y="818" width="34" height="24" rx="6" fill="url(#num)"/>
+<text x="397" y="835" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0f16">13</text>
+<text x="424" y="835" font-size="14" fill="#e2e8f0">Learning  —  strategy + retrieval update</text>
+<line x1="600" y1="850" x2="600" y2="864" stroke="#38bdf8" stroke-width="2" opacity="0.55"/>
+<polygon points="595,857 605,857 600,864" fill="#38bdf8" opacity="0.8"/>
+<rect x="370" y="864" width="460" height="40" rx="8" fill="#141c2a" stroke="#2a3a55"/>
+<rect x="380" y="872" width="34" height="24" rx="6" fill="url(#num)"/>
+<text x="397" y="889" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0f16">14</text>
+<text x="424" y="889" font-size="14" fill="#e2e8f0">Audit log  —  append-only</text>
+<line x1="600" y1="904" x2="600" y2="918" stroke="#38bdf8" stroke-width="2" opacity="0.55"/>
+<polygon points="595,911 605,911 600,918" fill="#38bdf8" opacity="0.8"/>
+<rect x="370" y="918" width="460" height="40" rx="8" fill="#141c2a" stroke="#2a3a55"/>
+<rect x="380" y="926" width="34" height="24" rx="6" fill="url(#num)"/>
+<text x="397" y="943" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0f16">15</text>
+<text x="424" y="943" font-size="14" fill="#e2e8f0">Cycle result</text>
+<rect x="900" y="134" width="260" height="122" rx="8" fill="#101724" stroke="#2a3a55"/>
+<rect x="900" y="134" width="4" height="122" fill="#38bdf8"/>
+<text x="918" y="158" font-size="13" font-weight="700" fill="#f1f5f9" letter-spacing="1">PERSISTENCE</text>
+<text x="918" y="182" font-size="12.5" fill="#94a3b8">SQLite · WAL mode</text>
+<text x="918" y="204" font-size="12.5" fill="#94a3b8">parameterized queries</text>
+<text x="918" y="226" font-size="12.5" fill="#94a3b8">versioned schema</text>
+<text x="918" y="248" font-size="12.5" fill="#94a3b8">transaction per write</text>
+<line x1="830" y1="164" x2="900" y2="195" stroke="#38bdf8" stroke-width="1.2" stroke-dasharray="5,4" opacity="0.45"/>
+<line x1="830" y1="722" x2="900" y2="195" stroke="#38bdf8" stroke-width="1.2" stroke-dasharray="5,4" opacity="0.45"/>
+<line x1="830" y1="830" x2="900" y2="195" stroke="#38bdf8" stroke-width="1.2" stroke-dasharray="5,4" opacity="0.45"/>
+<rect x="40" y="530" width="260" height="122" rx="8" fill="#101724" stroke="#2a3a55"/>
+<rect x="40" y="530" width="4" height="122" fill="#a78bfa"/>
+<text x="58" y="554" font-size="13" font-weight="700" fill="#f1f5f9" letter-spacing="1">SAFETY</text>
+<text x="58" y="578" font-size="12.5" fill="#94a3b8">step / token / time budgets</text>
+<text x="58" y="600" font-size="12.5" fill="#94a3b8">tool allowlist · default-deny</text>
+<text x="58" y="622" font-size="12.5" fill="#94a3b8">approval gates · kill switch</text>
+<text x="58" y="644" font-size="12.5" fill="#94a3b8">system cannot alter controls</text>
+<line x1="370" y1="110" x2="300" y2="591" stroke="#a78bfa" stroke-width="1.2" stroke-dasharray="5,4" opacity="0.45"/>
+<line x1="370" y1="560" x2="300" y2="591" stroke="#a78bfa" stroke-width="1.2" stroke-dasharray="5,4" opacity="0.45"/>
+<rect x="900" y="638" width="260" height="122" rx="8" fill="#101724" stroke="#2a3a55"/>
+<rect x="900" y="638" width="4" height="122" fill="#a78bfa"/>
+<text x="918" y="662" font-size="13" font-weight="700" fill="#f1f5f9" letter-spacing="1">PROVIDERS</text>
+<text x="918" y="686" font-size="12.5" fill="#94a3b8">mock (deterministic)</text>
+<text x="918" y="708" font-size="12.5" fill="#94a3b8">ollama · openai-compatible</text>
+<text x="918" y="730" font-size="12.5" fill="#94a3b8">gemini</text>
+<text x="918" y="752" font-size="12.5" fill="#94a3b8">timeouts · retries · no secret logs</text>
+<line x1="830" y1="614" x2="900" y2="699" stroke="#a78bfa" stroke-width="1.2" stroke-dasharray="5,4" opacity="0.45"/>
+<text x="600" y="1006" text-anchor="middle" font-size="12" fill="#64748b">Verified against src/consciousness_lab/core/loop.py · non-critical stage failures degrade gracefully, critical failures abort the cycle</text>
+</g></svg>
