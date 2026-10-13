@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="240" viewBox="0 0 1200 240" role="img" aria-labelledby="bannerTitle bannerDesc">
+  <title id="bannerTitle">Artificial Consciousness Lab</title>
+  <desc id="bannerDesc">Research-lab banner: a network of nodes converging on a central workspace, in deep navy with electric blue and violet accents.</desc>
+  <defs>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#38bdf8" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="240" fill="#0b0f16"/>
+  <circle cx="600" cy="120" r="150" fill="url(#glow)"/>
+  <g stroke="#1e293b" stroke-width="1">
+    <line x1="120" y1="60" x2="600" y2="120"/>
+    <line x1="120" y1="180" x2="600" y2="120"/>
+    <line x1="1080" y1="60" x2="600" y2="120"/>
+    <line x1="1080" y1="180" x2="600" y2="120"/>
+    <line x1="300" y1="40" x2="600" y2="120"/>
+    <line x1="300" y1="200" x2="600" y2="120"/>
+    <line x1="900" y1="40" x2="600" y2="120"/>
+    <line x1="900" y1="200" x2="600" y2="120"/>
+  </g>
+  <g fill="none" stroke="url(#accent)" stroke-width="2">
+    <circle cx="600" cy="120" r="34"/>
+    <circle cx="600" cy="120" r="22" opacity="0.55"/>
+  </g>
+  <circle cx="600" cy="120" r="7" fill="url(#accent)"/>
+  <g fill="#38bdf8" opacity="0.9">
+    <circle cx="120" cy="60" r="6"/><circle cx="120" cy="180" r="6"/>
+    <circle cx="300" cy="40" r="6"/><circle cx="300" cy="200" r="6"/>
+  </g>
+  <g fill="#a78bfa" opacity="0.9">
+    <circle cx="1080" cy="60" r="6"/><circle cx="1080" cy="180" r="6"/>
+    <circle cx="900" cy="40" r="6"/><circle cx="900" cy="200" r="6"/>
+  </g>
+  <g font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" text-anchor="middle">
+    <text x="600" y="112" font-size="34" font-weight="700" letter-spacing="6" fill="#f1f5f9">ARTIFICIAL CONSCIOUSNESS LAB</text>
+    <text x="600" y="142" font-size="14" letter-spacing="1.5" fill="#94a3b8">an open research platform investigating computational architectures</text>
+    <text x="600" y="162" font-size="14" letter-spacing="1.5" fill="#94a3b8">associated with consciousness</text>
+  </g>
+</svg>
