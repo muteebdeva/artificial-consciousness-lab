@@ -1,0 +1,76 @@
+# Real-provider experiment runs (Ollama, CPU).
+#
+# Manual trigger ONLY (workflow_dispatch) — never runs on push/PR.
+# Spins up Ollama on the runner, pulls a small model, and executes the
+# experiment protocols against the REAL provider instead of the mock.
+# Results are uploaded as an artifact; nothing here asserts architectural
+# conclusions — see the uploaded JSON and docs/benchmark_protocol.md.
+#
+# Trigger from the Actions tab, or via API:
+#   gh api repos/{owner}/{repo}/actions/workflows/ollama-experiments.yml/dispatches \
+#     -f ref=main -f inputs[trials]=3
+
+name: ollama-experiments
+
+on:
+  workflow_dispatch:
+    inputs:
+      trials:
+        description: "Trials per condition (pilot scale)"
+        required: false
+        default: "3"
+      model:
+        description: "Ollama model tag"
+        required: false
+        default: "qwen3:0.6b"
+
+jobs:
+  ollama:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Ollama
+        run: curl -fsSL https://ollama.com/install.sh | sh
+
+      - name: Start Ollama and pull model
+        run: |
+          ollama serve >/tmp/ollama.log 2>&1 &
+          for i in $(seq 1 24); do
+            curl -sf http://localhost:11434/api/tags >/dev/null 2>&1 && break
+            sleep 5
+          done
+          ollama pull "${{ inputs.model }}"
+          ollama list
+
+      - name: Install lab
+        run: pip install -e '.[dev]'
+
+      - name: Smoke test provider
+        run: |
+          ACL_PROVIDER=ollama OLLAMA_MODEL="${{ inputs.model }}" \
+            python scripts/demo_loop.py --config configs/mock.yaml --cycles 2
+
+      - name: Run experiments against real provider
+        run: |
+          export ACL_PROVIDER=ollama
+          export OLLAMA_MODEL="${{ inputs.model }}"
+          for p in 04_error_contradiction_detection 03_calibration 10_component_ablation; do
+            python scripts/run_experiment.py \
+              --protocol "experiments/protocols/${p}.json" \
+              --config configs/mock.yaml \
+              --trials "${{ inputs.trials }}"
+          done
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ollama-results
+          path: experiments/results/*.json
+          if-no-files-found: error
