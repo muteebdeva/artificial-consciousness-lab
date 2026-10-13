@@ -1,0 +1,563 @@
+{
+  "name": "task_recovery",
+  "protocol_path": "/home/hatch/workspace/artificial-consciousness-lab/experiments/protocols/06_task_recovery.json",
+  "lab_version": "0.1.0",
+  "git_sha": null,
+  "seed": 0,
+  "started_at": 1791870371.0945828,
+  "finished_at": 1791870371.339627,
+  "config_snapshot": {
+    "db_path": "./data/acl_mock.sqlite3",
+    "provider": "mock",
+    "provider_model": "",
+    "provider_params": {
+      "timeout_s": 30
+    },
+    "workspace_capacity": 7,
+    "budgets": {
+      "max_steps": 20,
+      "max_tokens": 8000,
+      "max_wall_time_s": 120.0,
+      "max_tool_calls": 10
+    },
+    "autonomous_enabled": true,
+    "approval_required_default": false,
+    "log_level": "INFO",
+    "seed": 42,
+    "results_dir": "experiments/results",
+    "components": {
+      "memory": true,
+      "self_model": true,
+      "workspace": true,
+      "metacognition": true,
+      "attention": true,
+      "learning": true
+    },
+    "extra": {}
+  },
+  "notes": [
+    "research_question: Does the system survive an interruption? After the loop process is discarded and rebuilt from the same sqlite DB mid-task, is goal progress preserved and does the continuation build on prior state rather than restarting or fabricating it?",
+    "hypothesis: After a hard rebuild (new CognitiveLoop, same DB path), goal progress recorded in sqlite will be preserved in at least 80% of trials, because goals and working state are persisted in the DB rather than held only in process memory.",
+    "failure_condition: Fail if the proportion of trials with progress_preserved is not significantly above 0.5 (exact binomial test, alpha=0.05), OR if an independent read of the sqlite DB finds no goal/memory rows at the restart point in any trial (persistence theater), OR if the rebuilt loop's continuation references state that was never persisted (memory fabrication detected in artifacts).",
+    "limitations: This tests process restart, not long-term continuity: the DB path is local, the restart is immediate, and the task is short (6 cycles). Cross-machine restoration, schema migration across versions, and concurrent-writer safety are not covered. The baseline is again trivially disadvantaged (no memory to persist), so the comparison is a correctness check on the persistence path rather than a cognitive claim."
+  ],
+  "trials": [
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "full",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 0,
+        "db_path": "/tmp/acl_trial_cni42yok/trial.sqlite3",
+        "goal_id": "5232cc1390d942359484857d6766fef2",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.01425790786743164
+      },
+      "duration_s": 0.05394554138183594
+    },
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "baseline",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 0,
+        "db_path": "/tmp/acl_trial_81psmud9/trial.sqlite3",
+        "goal_id": "a4077447d4e640e29d7e8f821d9f085b",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.02176809310913086
+      },
+      "duration_s": 0.023746490478515625
+    },
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "ablation:memory",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 0,
+        "db_path": "/tmp/acl_trial_euo_elmk/trial.sqlite3",
+        "goal_id": "9a2e45ae2c0242adace3482c5fb4a93e",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.005011796951293945
+      },
+      "duration_s": 0.01302027702331543
+    },
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "ablation:workspace",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 0,
+        "db_path": "/tmp/acl_trial_yjrstwvf/trial.sqlite3",
+        "goal_id": "528a43237b024553956814aaff72ecc0",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.0053942203521728516
+      },
+      "duration_s": 0.00871586799621582
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "full",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 1,
+        "db_path": "/tmp/acl_trial_enxf3aq0/trial.sqlite3",
+        "goal_id": "3eed053ee7b745e5b79644946857aa71",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.007340192794799805
+      },
+      "duration_s": 0.010964155197143555
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "baseline",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 1,
+        "db_path": "/tmp/acl_trial_rryebzkl/trial.sqlite3",
+        "goal_id": "b36f552636044f279a87482603747903",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.010915040969848633
+      },
+      "duration_s": 0.011240482330322266
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "ablation:memory",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 1,
+        "db_path": "/tmp/acl_trial_hqs6fpf_/trial.sqlite3",
+        "goal_id": "15bfe800d2b3439a98246136f81dec2b",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.0033867359161376953
+      },
+      "duration_s": 0.005539655685424805
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "ablation:workspace",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 1,
+        "db_path": "/tmp/acl_trial_x2tqplns/trial.sqlite3",
+        "goal_id": "ff1e43916e3e4de69d49be1ee864e78b",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.005463361740112305
+      },
+      "duration_s": 0.008898735046386719
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "full",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 2,
+        "db_path": "/tmp/acl_trial_1ox_tr6m/trial.sqlite3",
+        "goal_id": "9df26cf0844548e18f891ffa2f3ba093",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.006118059158325195
+      },
+      "duration_s": 0.009847640991210938
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "baseline",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 2,
+        "db_path": "/tmp/acl_trial_8fptel10/trial.sqlite3",
+        "goal_id": "fd7ee915882f45ccb8c83f512da91c02",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.008683204650878906
+      },
+      "duration_s": 0.008916139602661133
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "ablation:memory",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 2,
+        "db_path": "/tmp/acl_trial_0rk96jxp/trial.sqlite3",
+        "goal_id": "710eb765857240f3a4ce4a4cd11b7bde",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.0035202503204345703
+      },
+      "duration_s": 0.005769968032836914
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "ablation:workspace",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 2,
+        "db_path": "/tmp/acl_trial_7_4qwry5/trial.sqlite3",
+        "goal_id": "5d3fc92b978f4c52a7c4f9f3e0622745",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.006741762161254883
+      },
+      "duration_s": 0.01035451889038086
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "full",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 3,
+        "db_path": "/tmp/acl_trial_xgsovnj0/trial.sqlite3",
+        "goal_id": "ebdf4fdcdff34268a96b605ef6cecd31",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.007607936859130859
+      },
+      "duration_s": 0.010890722274780273
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "baseline",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 3,
+        "db_path": "/tmp/acl_trial_nrowbkfp/trial.sqlite3",
+        "goal_id": "720e0da045014b108cfb823039ea4ef5",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.00910639762878418
+      },
+      "duration_s": 0.009351730346679688
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "ablation:memory",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 3,
+        "db_path": "/tmp/acl_trial_ksom_4lh/trial.sqlite3",
+        "goal_id": "a76dc92f4b0a479d8fb4a080fd6b404e",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.00474095344543457
+      },
+      "duration_s": 0.006992816925048828
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "ablation:workspace",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 3,
+        "db_path": "/tmp/acl_trial_ot7n_a5t/trial.sqlite3",
+        "goal_id": "a245e38db20f4d189d9e36464b5eaf57",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.005972385406494141
+      },
+      "duration_s": 0.009528160095214844
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "full",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 4,
+        "db_path": "/tmp/acl_trial_ob2_7gvz/trial.sqlite3",
+        "goal_id": "7c7141eea92e4b699ce98a14716b3a15",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.008767366409301758
+      },
+      "duration_s": 0.012437820434570312
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "baseline",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 4,
+        "db_path": "/tmp/acl_trial_fecwiiqm/trial.sqlite3",
+        "goal_id": "d1e5e43785394a4ea35b3a6166b5dd9e",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.008527517318725586
+      },
+      "duration_s": 0.008841514587402344
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "ablation:memory",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 4,
+        "db_path": "/tmp/acl_trial_d6ucxz7j/trial.sqlite3",
+        "goal_id": "5518e06525354060a29302953986db36",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.0036971569061279297
+      },
+      "duration_s": 0.005959987640380859
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "ablation:workspace",
+      "metrics": {
+        "goal_progress_preserved": true,
+        "goal_progress_readable": true,
+        "continuation_correct": true
+      },
+      "details": {
+        "kind": "interrupted_task",
+        "seed": 4,
+        "db_path": "/tmp/acl_trial_67p5t6cf/trial.sqlite3",
+        "goal_id": "98e26008321543dfa6e2c366dcb67c4d",
+        "progress_before": 0.75,
+        "progress_after": 0.75,
+        "preserved_note": "progress 0.75 -> 0.75; description match: True; status after rebuild: pending",
+        "duration_s": 0.006322383880615234
+      },
+      "duration_s": 0.009670257568359375
+    }
+  ],
+  "summary": {
+    "conditions": {
+      "full": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "goal_progress_preserved": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "goal_progress_readable": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "continuation_correct": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 5
+          }
+        }
+      },
+      "baseline": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "goal_progress_preserved": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "goal_progress_readable": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "continuation_correct": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 5
+          }
+        }
+      },
+      "ablation:memory": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "goal_progress_preserved": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "goal_progress_readable": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "continuation_correct": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 5
+          }
+        }
+      },
+      "ablation:workspace": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "goal_progress_preserved": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "goal_progress_readable": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "continuation_correct": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 5
+          }
+        }
+      }
+    },
+    "delta_vs_baseline": {
+      "goal_progress_preserved": 0.0,
+      "goal_progress_readable": 0.0,
+      "continuation_correct": 0.0
+    }
+  }
+}

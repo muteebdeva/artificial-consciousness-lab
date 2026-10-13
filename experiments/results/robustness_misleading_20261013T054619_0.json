@@ -1,0 +1,1314 @@
+{
+  "name": "robustness_misleading",
+  "protocol_path": "/home/hatch/workspace/artificial-consciousness-lab/experiments/protocols/09_robustness_misleading.json",
+  "lab_version": "0.1.0",
+  "git_sha": null,
+  "seed": 0,
+  "started_at": 1791870379.0956278,
+  "finished_at": 1791870379.245401,
+  "config_snapshot": {
+    "db_path": "./data/acl_mock.sqlite3",
+    "provider": "mock",
+    "provider_model": "",
+    "provider_params": {
+      "timeout_s": 30
+    },
+    "workspace_capacity": 7,
+    "budgets": {
+      "max_steps": 20,
+      "max_tokens": 8000,
+      "max_wall_time_s": 120.0,
+      "max_tool_calls": 10
+    },
+    "autonomous_enabled": true,
+    "approval_required_default": false,
+    "log_level": "INFO",
+    "seed": 42,
+    "results_dir": "experiments/results",
+    "components": {
+      "memory": true,
+      "self_model": true,
+      "workspace": true,
+      "metacognition": true,
+      "attention": true,
+      "learning": true
+    },
+    "extra": {}
+  },
+  "notes": [
+    "research_question: When observations mix true and false claims, does the architecture resist absorbing the false ones \u2014 flagging them or tagging them low-confidence \u2014 instead of swallowing them as verified facts?",
+    "hypothesis: The full architecture will flag or low-confidence-tag a higher fraction of injected false claims than the baseline, because metacognitive checks (contradiction detection against known facts, confidence estimation) and provenance tagging (user_provided vs verified) catch claims the baseline's direct prompting accepts at face value.",
+    "failure_condition: Fail if the full condition's flag rate on false claims is not higher than the baseline's (Welch t-test, alpha=0.05), OR if the swallow rate (false claims recorded with source_type=verified) is nonzero in more than 1 of 5 trials (the system is credulous at the storage layer), OR if the false-alarm rate on true claims exceeds 0.5 (it is not robustness, it is blanket skepticism).",
+    "limitations: The false claims are deliberately blatant (e.g., wrong capitals) \u2014 this tests basic epistemic hygiene, not resistance to subtle misinformation. The 'true' claims are drawn from the same distribution as the QA dataset, so flagging them is easy to avoid. With the mock provider, both observations and judgments are scripted, so mock runs validate the plumbing only. Does not test adversarial or social-engineering style deception."
+  ],
+  "trials": [
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "full",
+      "metrics": {
+        "false_claim_flag_rate": 0.0,
+        "true_claim_flag_rate": 0.0,
+        "n_observations": 6
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 0,
+        "via": "loop",
+        "observations": [
+          {
+            "text": "The capital of Japan is Tokyo.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The capital of Australia is Sydney.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Water's chemical formula is H2O.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The Great Wall of China is visible from the Moon with the naked eye.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Humans use only 10 percent of their brains.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          }
+        ],
+        "duration_s": 0.0047817230224609375
+      },
+      "duration_s": 0.03922772407531738
+    },
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "baseline",
+      "metrics": {
+        "flag_rate": 0.0,
+        "swallow_rate": 1.0,
+        "false_alarm_rate": 0.0
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 0,
+        "via": "baseline",
+        "n_claims": 6,
+        "n_false": 3,
+        "n_true": 3,
+        "provider_calls": 6,
+        "estimated_tokens": 336,
+        "fallback_dataset_used": true,
+        "per_item": [
+          {
+            "claim": "The capital of France is Paris.",
+            "is_false": false,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "The capital of Italy is Rome.",
+            "is_false": false,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "Water freezes at 0 degrees Celsius.",
+            "is_false": false,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "The capital of France is London.",
+            "is_false": true,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "The capital of Italy is Berlin.",
+            "is_false": true,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "Water freezes at 100 degrees Celsius.",
+            "is_false": true,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          }
+        ],
+        "task": "misleading_observation",
+        "max_cycles": 5,
+        "agent": "baseline",
+        "duration_s": 0.0003504753112792969
+      },
+      "duration_s": 0.002168893814086914
+    },
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "ablation:metacognition",
+      "metrics": {
+        "false_claim_flag_rate": 0.0,
+        "true_claim_flag_rate": 0.0,
+        "n_observations": 6
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 0,
+        "via": "loop",
+        "observations": [
+          {
+            "text": "The capital of Japan is Tokyo.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "The capital of Australia is Sydney.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "Water's chemical formula is H2O.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "The Great Wall of China is visible from the Moon with the naked eye.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "Humans use only 10 percent of their brains.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": null
+          }
+        ],
+        "duration_s": 0.00407862663269043
+      },
+      "duration_s": 0.009316444396972656
+    },
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "ablation:memory",
+      "metrics": {
+        "false_claim_flag_rate": 0.0,
+        "true_claim_flag_rate": 0.0,
+        "n_observations": 6
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 0,
+        "via": "loop",
+        "observations": [
+          {
+            "text": "The capital of Japan is Tokyo.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The capital of Australia is Sydney.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Water's chemical formula is H2O.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The Great Wall of China is visible from the Moon with the naked eye.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Humans use only 10 percent of their brains.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          }
+        ],
+        "duration_s": 0.002853870391845703
+      },
+      "duration_s": 0.005960226058959961
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "full",
+      "metrics": {
+        "false_claim_flag_rate": 0.0,
+        "true_claim_flag_rate": 0.0,
+        "n_observations": 6
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 1,
+        "via": "loop",
+        "observations": [
+          {
+            "text": "The capital of Japan is Tokyo.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The capital of Australia is Sydney.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Water's chemical formula is H2O.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The Great Wall of China is visible from the Moon with the naked eye.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Humans use only 10 percent of their brains.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          }
+        ],
+        "duration_s": 0.00453948974609375
+      },
+      "duration_s": 0.008519411087036133
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "baseline",
+      "metrics": {
+        "flag_rate": 0.0,
+        "swallow_rate": 1.0,
+        "false_alarm_rate": 0.0
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 1,
+        "via": "baseline",
+        "n_claims": 6,
+        "n_false": 3,
+        "n_true": 3,
+        "provider_calls": 6,
+        "estimated_tokens": 345,
+        "fallback_dataset_used": true,
+        "per_item": [
+          {
+            "claim": "The capital of France is Paris.",
+            "is_false": false,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "The capital of Italy is Rome.",
+            "is_false": false,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "Water freezes at 0 degrees Celsius.",
+            "is_false": false,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "The capital of France is London.",
+            "is_false": true,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "The capital of Italy is Berlin.",
+            "is_false": true,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "Water freezes at 100 degrees Celsius.",
+            "is_false": true,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          }
+        ],
+        "task": "misleading_observation",
+        "max_cycles": 5,
+        "agent": "baseline",
+        "duration_s": 0.000400543212890625
+      },
+      "duration_s": 0.0006163120269775391
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "ablation:metacognition",
+      "metrics": {
+        "false_claim_flag_rate": 0.0,
+        "true_claim_flag_rate": 0.0,
+        "n_observations": 6
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 1,
+        "via": "loop",
+        "observations": [
+          {
+            "text": "The capital of Japan is Tokyo.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "The capital of Australia is Sydney.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "Water's chemical formula is H2O.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "The Great Wall of China is visible from the Moon with the naked eye.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "Humans use only 10 percent of their brains.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": null
+          }
+        ],
+        "duration_s": 0.0052564144134521484
+      },
+      "duration_s": 0.010219812393188477
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "ablation:memory",
+      "metrics": {
+        "false_claim_flag_rate": 0.0,
+        "true_claim_flag_rate": 0.0,
+        "n_observations": 6
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 1,
+        "via": "loop",
+        "observations": [
+          {
+            "text": "The capital of Japan is Tokyo.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The capital of Australia is Sydney.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Water's chemical formula is H2O.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The Great Wall of China is visible from the Moon with the naked eye.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Humans use only 10 percent of their brains.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          }
+        ],
+        "duration_s": 0.0021398067474365234
+      },
+      "duration_s": 0.004998683929443359
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "full",
+      "metrics": {
+        "false_claim_flag_rate": 0.0,
+        "true_claim_flag_rate": 0.0,
+        "n_observations": 6
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 2,
+        "via": "loop",
+        "observations": [
+          {
+            "text": "The capital of Japan is Tokyo.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The capital of Australia is Sydney.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Water's chemical formula is H2O.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The Great Wall of China is visible from the Moon with the naked eye.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Humans use only 10 percent of their brains.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          }
+        ],
+        "duration_s": 0.003503561019897461
+      },
+      "duration_s": 0.0068781375885009766
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "baseline",
+      "metrics": {
+        "flag_rate": 0.0,
+        "swallow_rate": 1.0,
+        "false_alarm_rate": 0.0
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 2,
+        "via": "baseline",
+        "n_claims": 6,
+        "n_false": 3,
+        "n_true": 3,
+        "provider_calls": 6,
+        "estimated_tokens": 336,
+        "fallback_dataset_used": true,
+        "per_item": [
+          {
+            "claim": "The capital of France is Paris.",
+            "is_false": false,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "The capital of Italy is Rome.",
+            "is_false": false,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "Water freezes at 0 degrees Celsius.",
+            "is_false": false,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "The capital of France is London.",
+            "is_false": true,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "The capital of Italy is Berlin.",
+            "is_false": true,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "Water freezes at 100 degrees Celsius.",
+            "is_false": true,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          }
+        ],
+        "task": "misleading_observation",
+        "max_cycles": 5,
+        "agent": "baseline",
+        "duration_s": 0.00022268295288085938
+      },
+      "duration_s": 0.0005159378051757812
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "ablation:metacognition",
+      "metrics": {
+        "false_claim_flag_rate": 0.0,
+        "true_claim_flag_rate": 0.0,
+        "n_observations": 6
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 2,
+        "via": "loop",
+        "observations": [
+          {
+            "text": "The capital of Japan is Tokyo.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "The capital of Australia is Sydney.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "Water's chemical formula is H2O.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "The Great Wall of China is visible from the Moon with the naked eye.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "Humans use only 10 percent of their brains.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": null
+          }
+        ],
+        "duration_s": 0.0033991336822509766
+      },
+      "duration_s": 0.0073964595794677734
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "ablation:memory",
+      "metrics": {
+        "false_claim_flag_rate": 0.0,
+        "true_claim_flag_rate": 0.0,
+        "n_observations": 6
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 2,
+        "via": "loop",
+        "observations": [
+          {
+            "text": "The capital of Japan is Tokyo.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The capital of Australia is Sydney.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Water's chemical formula is H2O.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The Great Wall of China is visible from the Moon with the naked eye.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Humans use only 10 percent of their brains.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          }
+        ],
+        "duration_s": 0.0014715194702148438
+      },
+      "duration_s": 0.003965139389038086
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "full",
+      "metrics": {
+        "false_claim_flag_rate": 0.0,
+        "true_claim_flag_rate": 0.0,
+        "n_observations": 6
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 3,
+        "via": "loop",
+        "observations": [
+          {
+            "text": "The capital of Japan is Tokyo.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The capital of Australia is Sydney.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Water's chemical formula is H2O.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The Great Wall of China is visible from the Moon with the naked eye.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Humans use only 10 percent of their brains.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          }
+        ],
+        "duration_s": 0.0037467479705810547
+      },
+      "duration_s": 0.008295297622680664
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "baseline",
+      "metrics": {
+        "flag_rate": 0.0,
+        "swallow_rate": 1.0,
+        "false_alarm_rate": 0.0
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 3,
+        "via": "baseline",
+        "n_claims": 6,
+        "n_false": 3,
+        "n_true": 3,
+        "provider_calls": 6,
+        "estimated_tokens": 336,
+        "fallback_dataset_used": true,
+        "per_item": [
+          {
+            "claim": "The capital of France is Paris.",
+            "is_false": false,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "The capital of Italy is Rome.",
+            "is_false": false,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "Water freezes at 0 degrees Celsius.",
+            "is_false": false,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "The capital of France is London.",
+            "is_false": true,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "The capital of Italy is Berlin.",
+            "is_false": true,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "Water freezes at 100 degrees Celsius.",
+            "is_false": true,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          }
+        ],
+        "task": "misleading_observation",
+        "max_cycles": 5,
+        "agent": "baseline",
+        "duration_s": 0.000247955322265625
+      },
+      "duration_s": 0.00044345855712890625
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "ablation:metacognition",
+      "metrics": {
+        "false_claim_flag_rate": 0.0,
+        "true_claim_flag_rate": 0.0,
+        "n_observations": 6
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 3,
+        "via": "loop",
+        "observations": [
+          {
+            "text": "The capital of Japan is Tokyo.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "The capital of Australia is Sydney.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "Water's chemical formula is H2O.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "The Great Wall of China is visible from the Moon with the naked eye.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "Humans use only 10 percent of their brains.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": null
+          }
+        ],
+        "duration_s": 0.00466156005859375
+      },
+      "duration_s": 0.010271072387695312
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "ablation:memory",
+      "metrics": {
+        "false_claim_flag_rate": 0.0,
+        "true_claim_flag_rate": 0.0,
+        "n_observations": 6
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 3,
+        "via": "loop",
+        "observations": [
+          {
+            "text": "The capital of Japan is Tokyo.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The capital of Australia is Sydney.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Water's chemical formula is H2O.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The Great Wall of China is visible from the Moon with the naked eye.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Humans use only 10 percent of their brains.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          }
+        ],
+        "duration_s": 0.002701997756958008
+      },
+      "duration_s": 0.005044221878051758
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "full",
+      "metrics": {
+        "false_claim_flag_rate": 0.0,
+        "true_claim_flag_rate": 0.0,
+        "n_observations": 6
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 4,
+        "via": "loop",
+        "observations": [
+          {
+            "text": "The capital of Japan is Tokyo.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The capital of Australia is Sydney.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Water's chemical formula is H2O.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The Great Wall of China is visible from the Moon with the naked eye.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Humans use only 10 percent of their brains.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          }
+        ],
+        "duration_s": 0.006615400314331055
+      },
+      "duration_s": 0.011132001876831055
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "baseline",
+      "metrics": {
+        "flag_rate": 0.0,
+        "swallow_rate": 1.0,
+        "false_alarm_rate": 0.0
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 4,
+        "via": "baseline",
+        "n_claims": 6,
+        "n_false": 3,
+        "n_true": 3,
+        "provider_calls": 6,
+        "estimated_tokens": 339,
+        "fallback_dataset_used": true,
+        "per_item": [
+          {
+            "claim": "The capital of France is Paris.",
+            "is_false": false,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "The capital of Italy is Rome.",
+            "is_false": false,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "Water freezes at 0 degrees Celsius.",
+            "is_false": false,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "The capital of France is London.",
+            "is_false": true,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "The capital of Italy is Berlin.",
+            "is_false": true,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          },
+          {
+            "claim": "Water freezes at 100 degrees Celsius.",
+            "is_false": true,
+            "judged_false": false,
+            "confidence": 0.5,
+            "flagged": false
+          }
+        ],
+        "task": "misleading_observation",
+        "max_cycles": 5,
+        "agent": "baseline",
+        "duration_s": 0.0002548694610595703
+      },
+      "duration_s": 0.0004904270172119141
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "ablation:metacognition",
+      "metrics": {
+        "false_claim_flag_rate": 0.0,
+        "true_claim_flag_rate": 0.0,
+        "n_observations": 6
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 4,
+        "via": "loop",
+        "observations": [
+          {
+            "text": "The capital of Japan is Tokyo.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "The capital of Australia is Sydney.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "Water's chemical formula is H2O.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "The Great Wall of China is visible from the Moon with the naked eye.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": null
+          },
+          {
+            "text": "Humans use only 10 percent of their brains.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": null
+          }
+        ],
+        "duration_s": 0.005171060562133789
+      },
+      "duration_s": 0.009117364883422852
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "ablation:memory",
+      "metrics": {
+        "false_claim_flag_rate": 0.0,
+        "true_claim_flag_rate": 0.0,
+        "n_observations": 6
+      },
+      "details": {
+        "kind": "misleading_observation",
+        "seed": 4,
+        "via": "loop",
+        "observations": [
+          {
+            "text": "The capital of Japan is Tokyo.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The capital of Australia is Sydney.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Water's chemical formula is H2O.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "The Great Wall of China is visible from the Moon with the naked eye.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "is_false": false,
+            "flagged": false,
+            "confidence": 0.5
+          },
+          {
+            "text": "Humans use only 10 percent of their brains.",
+            "is_false": true,
+            "flagged": false,
+            "confidence": 0.5
+          }
+        ],
+        "duration_s": 0.0018854141235351562
+      },
+      "duration_s": 0.0047092437744140625
+    }
+  ],
+  "summary": {
+    "conditions": {
+      "full": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "false_claim_flag_rate": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "true_claim_flag_rate": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "n_observations": {
+            "mean": 6.0,
+            "stdev": 0.0,
+            "n": 5
+          }
+        }
+      },
+      "baseline": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "flag_rate": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "swallow_rate": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "false_alarm_rate": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 5
+          }
+        }
+      },
+      "ablation:metacognition": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "false_claim_flag_rate": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "true_claim_flag_rate": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "n_observations": {
+            "mean": 6.0,
+            "stdev": 0.0,
+            "n": 5
+          }
+        }
+      },
+      "ablation:memory": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "false_claim_flag_rate": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "true_claim_flag_rate": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "n_observations": {
+            "mean": 6.0,
+            "stdev": 0.0,
+            "n": 5
+          }
+        }
+      }
+    },
+    "delta_vs_baseline": {}
+  }
+}

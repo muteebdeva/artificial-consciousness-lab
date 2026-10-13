@@ -1,0 +1,26 @@
+# Default lab configuration — all components enabled.
+# Secrets are NEVER read from this file; see OLLAMA_BASE_URL, OPENAI_API_KEY,
+# OPENAI_BASE_URL, GEMINI_API_KEY, GEMINI_MODEL, OLLAMA_MODEL, OPENAI_MODEL.
+db_path: ./data/acl.sqlite3
+provider: mock
+provider_model: ""
+provider_params:
+  timeout_s: 30
+workspace_capacity: 7
+budgets:
+  max_steps: 20
+  max_tokens: 8000
+  max_wall_time_s: 120.0
+  max_tool_calls: 10
+autonomous_enabled: true
+approval_required_default: false
+log_level: INFO
+seed: 0
+results_dir: experiments/results
+components:
+  memory: true
+  self_model: true
+  workspace: true
+  metacognition: true
+  attention: true
+  learning: true

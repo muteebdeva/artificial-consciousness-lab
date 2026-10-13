@@ -1,0 +1,25 @@
+# Ablation: workspace disabled. Candidates pass through unfiltered (no
+# capacity-limited competitive selection, no broadcast).
+db_path: ./data/acl_ablation_workspace.sqlite3
+provider: mock
+provider_model: ""
+provider_params:
+  timeout_s: 30
+workspace_capacity: 7
+budgets:
+  max_steps: 20
+  max_tokens: 8000
+  max_wall_time_s: 120.0
+  max_tool_calls: 10
+autonomous_enabled: true
+approval_required_default: false
+log_level: INFO
+seed: 0
+results_dir: experiments/results
+components:
+  memory: true
+  self_model: true
+  workspace: false
+  metacognition: true
+  attention: true
+  learning: true

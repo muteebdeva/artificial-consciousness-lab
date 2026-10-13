@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artificial Consciousness Lab — Research Dashboard</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; background: #0f1419; color: #e6e6e6; }
+  header { background: #1a2230; padding: 12px 20px; border-bottom: 1px solid #2a3a55; }
+  header h1 { margin: 0; font-size: 1.2rem; }
+  header p { margin: 4px 0 0; color: #9fb3cc; font-size: 0.85rem; }
+  .warn { background: #3a2b00; border: 1px solid #8a6d00; color: #ffd970; padding: 10px 20px; font-size: 0.85rem; }
+  main { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 12px; padding: 16px; }
+  section { background: #161d28; border: 1px solid #2a3a55; border-radius: 8px; padding: 12px 14px; }
+  section h2 { margin: 0 0 8px; font-size: 1rem; color: #9fc5ff; }
+  pre { background: #0b0f15; padding: 8px; border-radius: 6px; overflow: auto; max-height: 320px; font-size: 0.75rem; }
+  .tag { display: inline-block; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
+  .tag.inferred { background: #4a2b00; color: #ffb84d; }
+  .tag.verified { background: #003a1f; color: #5dff9d; }
+  button { background: #2a5fb0; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+  button.danger { background: #a02a2a; }
+  input[type=text] { width: 70%; padding: 6px; border-radius: 6px; border: 1px solid #2a3a55; background: #0b0f15; color: #e6e6e6; }
+  .row { display: flex; gap: 8px; margin-bottom: 8px; }
+  #status { font-size: 0.8rem; color: #9fb3cc; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Artificial Consciousness Lab — Research Dashboard</h1>
+  <p>Live backend state. Inferred / model-generated values are labeled as such.
+     Nothing here measures subjective experience.</p>
+  <p id="status">connecting…</p>
+</header>
+<div class="warn">
+  Scientific-integrity notice: this dashboard displays functional cognitive state
+  (workspace contents, memory provenance, calibration metrics). It does <b>not</b>
+  display consciousness measurements — no such measurement exists here.
+</div>
+<main>
+  <section><h2>Workspace</h2><pre id="workspace">…</pre></section>
+  <section><h2>Memory <span class="tag verified">provenance-tagged</span></h2>
+    <div class="row"><input type="text" id="memq" placeholder="memory query"><button onclick="loadMemory()">Query</button></div>
+    <pre id="memory">…</pre></section>
+  <section><h2>Self-model <span class="tag inferred">grounded in observables</span></h2><pre id="selfmodel">…</pre></section>
+  <section><h2>Goals &amp; progress</h2><pre id="goals">…</pre></section>
+  <section><h2>Uncertainty <span class="tag inferred">model-estimated</span></h2><pre id="uncertainty">…</pre></section>
+  <section><h2>Predictions vs outcomes</h2><pre id="predictions">…</pre></section>
+  <section><h2>Module traces</h2><pre id="traces">…</pre></section>
+  <section><h2>Experiments</h2><pre id="experiments">…</pre></section>
+  <section><h2>Resources &amp; errors</h2><pre id="resources">…</pre><pre id="errors">…</pre>
+    <button class="danger" onclick="stopRun()">Stop active run</button></section>
+</main>
+<script>
+async function get(path, el) {
+  try {
+    const r = await fetch(path);
+    const j = await r.json();
+    document.getElementById(el).textContent = JSON.stringify(j, null, 1).slice(0, 6000);
+  } catch (e) { document.getElementById(el).textContent = 'error: ' + e; }
+}
+async function loadAll() {
+  await Promise.all([
+    get('/api/workspace', 'workspace'),
+    get('/api/self-model', 'selfmodel'),
+    get('/api/goals', 'goals'),
+    get('/api/uncertainty', 'uncertainty'),
+    get('/api/predictions', 'predictions'),
+    get('/api/traces', 'traces'),
+    get('/api/experiments', 'experiments'),
+    get('/api/resources', 'resources'),
+    get('/api/errors', 'errors'),
+  ]);
+  document.getElementById('status').textContent =
+    'connected — last refresh ' + new Date().toLocaleTimeString();
+}
+async function loadMemory() {
+  const q = document.getElementById('memq').value || '';
+  get('/api/memory?q=' + encodeURIComponent(q), 'memory');
+}
+async function stopRun() {
+  if (!confirm('Stop the active run?')) return;
+  await fetch('/api/stop', {method: 'POST'});
+  loadAll();
+}
+loadAll(); loadMemory();
+setInterval(loadAll, 10000);
+</script>
+</body>
+</html>

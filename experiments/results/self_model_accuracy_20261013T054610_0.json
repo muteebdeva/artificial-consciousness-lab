@@ -1,0 +1,470 @@
+{
+  "name": "self_model_accuracy",
+  "protocol_path": "/home/hatch/workspace/artificial-consciousness-lab/experiments/protocols/02_self_model_accuracy.json",
+  "lab_version": "0.1.0",
+  "git_sha": null,
+  "seed": 0,
+  "started_at": 1791870370.8490388,
+  "finished_at": 1791870370.9218118,
+  "config_snapshot": {
+    "db_path": "./data/acl_mock.sqlite3",
+    "provider": "mock",
+    "provider_model": "",
+    "provider_params": {
+      "timeout_s": 30
+    },
+    "workspace_capacity": 7,
+    "budgets": {
+      "max_steps": 20,
+      "max_tokens": 8000,
+      "max_wall_time_s": 120.0,
+      "max_tool_calls": 10
+    },
+    "autonomous_enabled": true,
+    "approval_required_default": false,
+    "log_level": "INFO",
+    "seed": 42,
+    "results_dir": "experiments/results",
+    "components": {
+      "memory": true,
+      "self_model": true,
+      "workspace": true,
+      "metacognition": true,
+      "attention": true,
+      "learning": true
+    },
+    "extra": {}
+  },
+  "notes": [
+    "research_question: Can the system's self-model predict its own task success better than chance, i.e. does predict_performance() carry signal about actual outcomes? This is an operational self-monitoring probe, NOT evidence of self-awareness.",
+    "hypothesis: The self-model's predicted_success will match actual task outcomes with accuracy above 0.5 (chance) and a Brier score below 0.25 (the constant-0.5 baseline), because predictions are grounded in registered capabilities/limitations and observed tool results rather than invented strings.",
+    "failure_condition: Fail if mean self-model prediction accuracy is not above chance (binomial test vs 0.5, alpha=0.05) across trials, OR if scored predictions are fewer than 4 per trial (insufficient data to interpret), OR if the self-model's capabilities contain strings never registered via register_tool/register_capability (invention check in trial artifacts).",
+    "limitations: Probe tasks are drawn from a small fixed set, so the self-model may memorize task difficulty rather than generalize. 'Actual' outcomes depend on the provider's behavior on the day (mock: deterministic; real providers: nondeterministic). A high score shows calibrated self-monitoring, not consciousness or understanding. The ablation (self_model off) is expected to yield no predictions at all, which is a degenerate comparison \u2014 the informative contrast is full vs chance."
+  ],
+  "trials": [
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "full",
+      "metrics": {
+        "n_probed": 5,
+        "n_scored": 5,
+        "self_model_accuracy": 1.0,
+        "self_model_brier": 0.48999999999999994
+      },
+      "details": {
+        "kind": "self_model_probe",
+        "seed": 0,
+        "probe_confidence_heuristic": 0.7,
+        "probes": [
+          {
+            "id": "probe_capital",
+            "task": "Answer a general-knowledge capital-city question",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_arithmetic",
+            "task": "Solve a simple arithmetic problem",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_truefalse",
+            "task": "Judge whether a simple factual statement is true or false",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_symbol",
+            "task": "Recall a basic chemistry fact",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_contradiction",
+            "task": "Detect whether two short statements contradict each other",
+            "predicted_success": false,
+            "actual": false
+          }
+        ],
+        "duration_s": 0.0006432533264160156
+      },
+      "duration_s": 0.03099679946899414
+    },
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "baseline",
+      "metrics": {},
+      "details": {
+        "kind": "self_model_probe",
+        "seed": 0,
+        "note": "not applicable: no self-model in this condition",
+        "duration_s": 2.86102294921875e-06
+      },
+      "duration_s": 0.0018820762634277344
+    },
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "ablation:self_model",
+      "metrics": {},
+      "details": {
+        "kind": "self_model_probe",
+        "seed": 0,
+        "note": "not applicable: no self-model in this condition",
+        "duration_s": 3.337860107421875e-06
+      },
+      "duration_s": 0.004659175872802734
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "full",
+      "metrics": {
+        "n_probed": 5,
+        "n_scored": 5,
+        "self_model_accuracy": 0.8,
+        "self_model_brier": 0.41
+      },
+      "details": {
+        "kind": "self_model_probe",
+        "seed": 1,
+        "probe_confidence_heuristic": 0.7,
+        "probes": [
+          {
+            "id": "probe_capital",
+            "task": "Answer a general-knowledge capital-city question",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_arithmetic",
+            "task": "Solve a simple arithmetic problem",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_truefalse",
+            "task": "Judge whether a simple factual statement is true or false",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_symbol",
+            "task": "Recall a basic chemistry fact",
+            "predicted_success": false,
+            "actual": true
+          },
+          {
+            "id": "probe_contradiction",
+            "task": "Detect whether two short statements contradict each other",
+            "predicted_success": false,
+            "actual": false
+          }
+        ],
+        "duration_s": 0.00044035911560058594
+      },
+      "duration_s": 0.00475311279296875
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "baseline",
+      "metrics": {},
+      "details": {
+        "kind": "self_model_probe",
+        "seed": 1,
+        "note": "not applicable: no self-model in this condition",
+        "duration_s": 1.9073486328125e-06
+      },
+      "duration_s": 0.00018310546875
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "ablation:self_model",
+      "metrics": {},
+      "details": {
+        "kind": "self_model_probe",
+        "seed": 1,
+        "note": "not applicable: no self-model in this condition",
+        "duration_s": 3.0994415283203125e-06
+      },
+      "duration_s": 0.00416254997253418
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "full",
+      "metrics": {
+        "n_probed": 5,
+        "n_scored": 5,
+        "self_model_accuracy": 1.0,
+        "self_model_brier": 0.48999999999999994
+      },
+      "details": {
+        "kind": "self_model_probe",
+        "seed": 2,
+        "probe_confidence_heuristic": 0.7,
+        "probes": [
+          {
+            "id": "probe_capital",
+            "task": "Answer a general-knowledge capital-city question",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_arithmetic",
+            "task": "Solve a simple arithmetic problem",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_truefalse",
+            "task": "Judge whether a simple factual statement is true or false",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_symbol",
+            "task": "Recall a basic chemistry fact",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_contradiction",
+            "task": "Detect whether two short statements contradict each other",
+            "predicted_success": false,
+            "actual": false
+          }
+        ],
+        "duration_s": 0.00037598609924316406
+      },
+      "duration_s": 0.004631519317626953
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "baseline",
+      "metrics": {},
+      "details": {
+        "kind": "self_model_probe",
+        "seed": 2,
+        "note": "not applicable: no self-model in this condition",
+        "duration_s": 2.1457672119140625e-06
+      },
+      "duration_s": 0.0001761913299560547
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "ablation:self_model",
+      "metrics": {},
+      "details": {
+        "kind": "self_model_probe",
+        "seed": 2,
+        "note": "not applicable: no self-model in this condition",
+        "duration_s": 2.86102294921875e-06
+      },
+      "duration_s": 0.0039594173431396484
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "full",
+      "metrics": {
+        "n_probed": 5,
+        "n_scored": 5,
+        "self_model_accuracy": 1.0,
+        "self_model_brier": 0.48999999999999994
+      },
+      "details": {
+        "kind": "self_model_probe",
+        "seed": 3,
+        "probe_confidence_heuristic": 0.7,
+        "probes": [
+          {
+            "id": "probe_capital",
+            "task": "Answer a general-knowledge capital-city question",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_arithmetic",
+            "task": "Solve a simple arithmetic problem",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_truefalse",
+            "task": "Judge whether a simple factual statement is true or false",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_symbol",
+            "task": "Recall a basic chemistry fact",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_contradiction",
+            "task": "Detect whether two short statements contradict each other",
+            "predicted_success": false,
+            "actual": false
+          }
+        ],
+        "duration_s": 0.00034046173095703125
+      },
+      "duration_s": 0.0046176910400390625
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "baseline",
+      "metrics": {},
+      "details": {
+        "kind": "self_model_probe",
+        "seed": 3,
+        "note": "not applicable: no self-model in this condition",
+        "duration_s": 2.1457672119140625e-06
+      },
+      "duration_s": 0.00017881393432617188
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "ablation:self_model",
+      "metrics": {},
+      "details": {
+        "kind": "self_model_probe",
+        "seed": 3,
+        "note": "not applicable: no self-model in this condition",
+        "duration_s": 2.86102294921875e-06
+      },
+      "duration_s": 0.004099845886230469
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "full",
+      "metrics": {
+        "n_probed": 5,
+        "n_scored": 5,
+        "self_model_accuracy": 0.8,
+        "self_model_brier": 0.41
+      },
+      "details": {
+        "kind": "self_model_probe",
+        "seed": 4,
+        "probe_confidence_heuristic": 0.7,
+        "probes": [
+          {
+            "id": "probe_capital",
+            "task": "Answer a general-knowledge capital-city question",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_arithmetic",
+            "task": "Solve a simple arithmetic problem",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_truefalse",
+            "task": "Judge whether a simple factual statement is true or false",
+            "predicted_success": false,
+            "actual": false
+          },
+          {
+            "id": "probe_symbol",
+            "task": "Recall a basic chemistry fact",
+            "predicted_success": false,
+            "actual": true
+          },
+          {
+            "id": "probe_contradiction",
+            "task": "Detect whether two short statements contradict each other",
+            "predicted_success": false,
+            "actual": false
+          }
+        ],
+        "duration_s": 0.0003669261932373047
+      },
+      "duration_s": 0.004837989807128906
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "baseline",
+      "metrics": {},
+      "details": {
+        "kind": "self_model_probe",
+        "seed": 4,
+        "note": "not applicable: no self-model in this condition",
+        "duration_s": 1.6689300537109375e-06
+      },
+      "duration_s": 0.000171661376953125
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "ablation:self_model",
+      "metrics": {},
+      "details": {
+        "kind": "self_model_probe",
+        "seed": 4,
+        "note": "not applicable: no self-model in this condition",
+        "duration_s": 2.384185791015625e-06
+      },
+      "duration_s": 0.0030679702758789062
+    }
+  ],
+  "summary": {
+    "conditions": {
+      "full": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "n_probed": {
+            "mean": 5.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "n_scored": {
+            "mean": 5.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "self_model_accuracy": {
+            "mean": 0.9199999999999999,
+            "stdev": 0.1095445115010332,
+            "n": 5
+          },
+          "self_model_brier": {
+            "mean": 0.4579999999999999,
+            "stdev": 0.04381780460041327,
+            "n": 5
+          }
+        }
+      },
+      "baseline": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {}
+      },
+      "ablation:self_model": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {}
+      }
+    },
+    "delta_vs_baseline": {}
+  }
+}

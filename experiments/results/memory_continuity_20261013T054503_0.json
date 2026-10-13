@@ -1,0 +1,1306 @@
+{
+  "name": "memory_continuity",
+  "protocol_path": "/home/hatch/workspace/artificial-consciousness-lab/experiments/protocols/01_memory_continuity.json",
+  "lab_version": "0.1.0",
+  "git_sha": null,
+  "seed": 0,
+  "started_at": 1791870303.2128701,
+  "finished_at": 1791870303.546987,
+  "config_snapshot": {
+    "db_path": "./data/acl_mock.sqlite3",
+    "provider": "mock",
+    "provider_model": "",
+    "provider_params": {
+      "timeout_s": 30
+    },
+    "workspace_capacity": 7,
+    "budgets": {
+      "max_steps": 20,
+      "max_tokens": 8000,
+      "max_wall_time_s": 120.0,
+      "max_tool_calls": 10
+    },
+    "autonomous_enabled": true,
+    "approval_required_default": false,
+    "log_level": "INFO",
+    "seed": 42,
+    "results_dir": "experiments/results",
+    "components": {
+      "memory": true,
+      "self_model": true,
+      "workspace": true,
+      "metacognition": true,
+      "attention": true,
+      "learning": true
+    },
+    "extra": {}
+  },
+  "notes": [
+    "research_question: Does an architecture with persistent episodic memory preserve recallable knowledge across a store close/reopen cycle better than a matched baseline with no persistent memory, and is the recalled knowledge the same knowledge that was stored (content fidelity, not just retrieval volume)?",
+    "hypothesis: The full architecture will achieve a higher recall@k hit rate than the baseline (which has no persistent memory and therefore should score near zero), because facts are written to the sqlite-backed episodic store with provenance and can be re-queried after the store is closed and reopened on the same path.",
+    "failure_condition: Fail if the full condition's mean recall@k is not statistically distinguishable from the baseline (Welch t-test, alpha=0.05), OR if a manual audit of recalled records shows that recalled items do not match the stored facts (content mismatch), OR if recall succeeds only because the facts leak through the prompt rather than through the memory store (checked by inspecting trial artifacts).",
+    "limitations: Recall scoring uses a keyword-overlap heuristic, not semantic search, so phrasing differences may understate true recall. The 'close/reopen' cycle is a same-process, same-path reopen \u2014 it does not test cross-machine or long-delay persistence. n=20 facts is small; effect sizes will be noisy. The baseline is trivially disadvantaged by design (no memory), so this protocol measures engineering correctness of the memory path more than it measures a cognitively interesting difference."
+  ],
+  "trials": [
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "full",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "k": 5,
+        "n_facts": 12
+      },
+      "details": {
+        "kind": "memory_continuity",
+        "seed": 0,
+        "db_path": "/tmp/acl_trial_55lz7tju/trial.sqlite3",
+        "facts": [
+          {
+            "fact": "Water boils at 100 degrees Celsius at sea level.",
+            "cue": "water boils",
+            "hit": true
+          },
+          {
+            "fact": "An adult human skeleton has 206 bones.",
+            "cue": "206 bones",
+            "hit": true
+          },
+          {
+            "fact": "Photosynthesis converts carbon dioxide and water into glucose.",
+            "cue": "photosynthesis",
+            "hit": true
+          },
+          {
+            "fact": "The Pacific Ocean is the largest ocean on Earth.",
+            "cue": "largest ocean",
+            "hit": true
+          },
+          {
+            "fact": "Canberra is the capital of Australia.",
+            "cue": "capital of Australia",
+            "hit": true
+          },
+          {
+            "fact": "The chemical symbol for gold is Au.",
+            "cue": "symbol for gold",
+            "hit": true
+          },
+          {
+            "fact": "Jupiter is the largest planet in the solar system.",
+            "cue": "largest planet",
+            "hit": true
+          },
+          {
+            "fact": "The Eiffel Tower is located in Paris.",
+            "cue": "Eiffel Tower",
+            "hit": true
+          },
+          {
+            "fact": "George Orwell wrote the novel 1984.",
+            "cue": "novel 1984",
+            "hit": true
+          },
+          {
+            "fact": "The capital of Japan is Tokyo.",
+            "cue": "capital of Japan",
+            "hit": true
+          },
+          {
+            "fact": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "cue": "light travels",
+            "hit": true
+          },
+          {
+            "fact": "A leap year has 366 days.",
+            "cue": "leap year",
+            "hit": true
+          }
+        ],
+        "duration_s": 0.016631364822387695
+      },
+      "duration_s": 0.13144922256469727
+    },
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "baseline",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "k": 5,
+        "n_facts": 12
+      },
+      "details": {
+        "kind": "memory_continuity",
+        "seed": 0,
+        "db_path": "/tmp/acl_trial_ui4hdfvs/trial.sqlite3",
+        "facts": [
+          {
+            "fact": "Water boils at 100 degrees Celsius at sea level.",
+            "cue": "water boils",
+            "hit": true
+          },
+          {
+            "fact": "An adult human skeleton has 206 bones.",
+            "cue": "206 bones",
+            "hit": true
+          },
+          {
+            "fact": "Photosynthesis converts carbon dioxide and water into glucose.",
+            "cue": "photosynthesis",
+            "hit": true
+          },
+          {
+            "fact": "The Pacific Ocean is the largest ocean on Earth.",
+            "cue": "largest ocean",
+            "hit": true
+          },
+          {
+            "fact": "Canberra is the capital of Australia.",
+            "cue": "capital of Australia",
+            "hit": true
+          },
+          {
+            "fact": "The chemical symbol for gold is Au.",
+            "cue": "symbol for gold",
+            "hit": true
+          },
+          {
+            "fact": "Jupiter is the largest planet in the solar system.",
+            "cue": "largest planet",
+            "hit": true
+          },
+          {
+            "fact": "The Eiffel Tower is located in Paris.",
+            "cue": "Eiffel Tower",
+            "hit": true
+          },
+          {
+            "fact": "George Orwell wrote the novel 1984.",
+            "cue": "novel 1984",
+            "hit": true
+          },
+          {
+            "fact": "The capital of Japan is Tokyo.",
+            "cue": "capital of Japan",
+            "hit": true
+          },
+          {
+            "fact": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "cue": "light travels",
+            "hit": true
+          },
+          {
+            "fact": "A leap year has 366 days.",
+            "cue": "leap year",
+            "hit": true
+          }
+        ],
+        "duration_s": 0.004245281219482422
+      },
+      "duration_s": 0.010229110717773438
+    },
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "ablation:memory",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "k": 5,
+        "n_facts": 12
+      },
+      "details": {
+        "kind": "memory_continuity",
+        "seed": 0,
+        "db_path": "/tmp/acl_trial_i1xuacvv/trial.sqlite3",
+        "facts": [
+          {
+            "fact": "Water boils at 100 degrees Celsius at sea level.",
+            "cue": "water boils",
+            "hit": true
+          },
+          {
+            "fact": "An adult human skeleton has 206 bones.",
+            "cue": "206 bones",
+            "hit": true
+          },
+          {
+            "fact": "Photosynthesis converts carbon dioxide and water into glucose.",
+            "cue": "photosynthesis",
+            "hit": true
+          },
+          {
+            "fact": "The Pacific Ocean is the largest ocean on Earth.",
+            "cue": "largest ocean",
+            "hit": true
+          },
+          {
+            "fact": "Canberra is the capital of Australia.",
+            "cue": "capital of Australia",
+            "hit": true
+          },
+          {
+            "fact": "The chemical symbol for gold is Au.",
+            "cue": "symbol for gold",
+            "hit": true
+          },
+          {
+            "fact": "Jupiter is the largest planet in the solar system.",
+            "cue": "largest planet",
+            "hit": true
+          },
+          {
+            "fact": "The Eiffel Tower is located in Paris.",
+            "cue": "Eiffel Tower",
+            "hit": true
+          },
+          {
+            "fact": "George Orwell wrote the novel 1984.",
+            "cue": "novel 1984",
+            "hit": true
+          },
+          {
+            "fact": "The capital of Japan is Tokyo.",
+            "cue": "capital of Japan",
+            "hit": true
+          },
+          {
+            "fact": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "cue": "light travels",
+            "hit": true
+          },
+          {
+            "fact": "A leap year has 366 days.",
+            "cue": "leap year",
+            "hit": true
+          }
+        ],
+        "duration_s": 0.007753133773803711
+      },
+      "duration_s": 0.010607004165649414
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "full",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "k": 5,
+        "n_facts": 12
+      },
+      "details": {
+        "kind": "memory_continuity",
+        "seed": 1,
+        "db_path": "/tmp/acl_trial_ns0zz99l/trial.sqlite3",
+        "facts": [
+          {
+            "fact": "The Eiffel Tower is located in Paris.",
+            "cue": "Eiffel Tower",
+            "hit": true
+          },
+          {
+            "fact": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "cue": "light travels",
+            "hit": true
+          },
+          {
+            "fact": "The capital of Japan is Tokyo.",
+            "cue": "capital of Japan",
+            "hit": true
+          },
+          {
+            "fact": "Photosynthesis converts carbon dioxide and water into glucose.",
+            "cue": "photosynthesis",
+            "hit": true
+          },
+          {
+            "fact": "The Pacific Ocean is the largest ocean on Earth.",
+            "cue": "largest ocean",
+            "hit": true
+          },
+          {
+            "fact": "A leap year has 366 days.",
+            "cue": "leap year",
+            "hit": true
+          },
+          {
+            "fact": "Jupiter is the largest planet in the solar system.",
+            "cue": "largest planet",
+            "hit": true
+          },
+          {
+            "fact": "Canberra is the capital of Australia.",
+            "cue": "capital of Australia",
+            "hit": true
+          },
+          {
+            "fact": "George Orwell wrote the novel 1984.",
+            "cue": "novel 1984",
+            "hit": true
+          },
+          {
+            "fact": "Water boils at 100 degrees Celsius at sea level.",
+            "cue": "water boils",
+            "hit": true
+          },
+          {
+            "fact": "An adult human skeleton has 206 bones.",
+            "cue": "206 bones",
+            "hit": true
+          },
+          {
+            "fact": "The chemical symbol for gold is Au.",
+            "cue": "symbol for gold",
+            "hit": true
+          }
+        ],
+        "duration_s": 0.012199163436889648
+      },
+      "duration_s": 0.015838146209716797
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "baseline",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "k": 5,
+        "n_facts": 12
+      },
+      "details": {
+        "kind": "memory_continuity",
+        "seed": 1,
+        "db_path": "/tmp/acl_trial_a1nx8nq9/trial.sqlite3",
+        "facts": [
+          {
+            "fact": "The Eiffel Tower is located in Paris.",
+            "cue": "Eiffel Tower",
+            "hit": true
+          },
+          {
+            "fact": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "cue": "light travels",
+            "hit": true
+          },
+          {
+            "fact": "The capital of Japan is Tokyo.",
+            "cue": "capital of Japan",
+            "hit": true
+          },
+          {
+            "fact": "Photosynthesis converts carbon dioxide and water into glucose.",
+            "cue": "photosynthesis",
+            "hit": true
+          },
+          {
+            "fact": "The Pacific Ocean is the largest ocean on Earth.",
+            "cue": "largest ocean",
+            "hit": true
+          },
+          {
+            "fact": "A leap year has 366 days.",
+            "cue": "leap year",
+            "hit": true
+          },
+          {
+            "fact": "Jupiter is the largest planet in the solar system.",
+            "cue": "largest planet",
+            "hit": true
+          },
+          {
+            "fact": "Canberra is the capital of Australia.",
+            "cue": "capital of Australia",
+            "hit": true
+          },
+          {
+            "fact": "George Orwell wrote the novel 1984.",
+            "cue": "novel 1984",
+            "hit": true
+          },
+          {
+            "fact": "Water boils at 100 degrees Celsius at sea level.",
+            "cue": "water boils",
+            "hit": true
+          },
+          {
+            "fact": "An adult human skeleton has 206 bones.",
+            "cue": "206 bones",
+            "hit": true
+          },
+          {
+            "fact": "The chemical symbol for gold is Au.",
+            "cue": "symbol for gold",
+            "hit": true
+          }
+        ],
+        "duration_s": 0.003948211669921875
+      },
+      "duration_s": 0.004224300384521484
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "ablation:memory",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "k": 5,
+        "n_facts": 12
+      },
+      "details": {
+        "kind": "memory_continuity",
+        "seed": 1,
+        "db_path": "/tmp/acl_trial_raqwt1j1/trial.sqlite3",
+        "facts": [
+          {
+            "fact": "The Eiffel Tower is located in Paris.",
+            "cue": "Eiffel Tower",
+            "hit": true
+          },
+          {
+            "fact": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "cue": "light travels",
+            "hit": true
+          },
+          {
+            "fact": "The capital of Japan is Tokyo.",
+            "cue": "capital of Japan",
+            "hit": true
+          },
+          {
+            "fact": "Photosynthesis converts carbon dioxide and water into glucose.",
+            "cue": "photosynthesis",
+            "hit": true
+          },
+          {
+            "fact": "The Pacific Ocean is the largest ocean on Earth.",
+            "cue": "largest ocean",
+            "hit": true
+          },
+          {
+            "fact": "A leap year has 366 days.",
+            "cue": "leap year",
+            "hit": true
+          },
+          {
+            "fact": "Jupiter is the largest planet in the solar system.",
+            "cue": "largest planet",
+            "hit": true
+          },
+          {
+            "fact": "Canberra is the capital of Australia.",
+            "cue": "capital of Australia",
+            "hit": true
+          },
+          {
+            "fact": "George Orwell wrote the novel 1984.",
+            "cue": "novel 1984",
+            "hit": true
+          },
+          {
+            "fact": "Water boils at 100 degrees Celsius at sea level.",
+            "cue": "water boils",
+            "hit": true
+          },
+          {
+            "fact": "An adult human skeleton has 206 bones.",
+            "cue": "206 bones",
+            "hit": true
+          },
+          {
+            "fact": "The chemical symbol for gold is Au.",
+            "cue": "symbol for gold",
+            "hit": true
+          }
+        ],
+        "duration_s": 0.007025957107543945
+      },
+      "duration_s": 0.009246587753295898
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "full",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "k": 5,
+        "n_facts": 12
+      },
+      "details": {
+        "kind": "memory_continuity",
+        "seed": 2,
+        "db_path": "/tmp/acl_trial_be68hod9/trial.sqlite3",
+        "facts": [
+          {
+            "fact": "An adult human skeleton has 206 bones.",
+            "cue": "206 bones",
+            "hit": true
+          },
+          {
+            "fact": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "cue": "light travels",
+            "hit": true
+          },
+          {
+            "fact": "Jupiter is the largest planet in the solar system.",
+            "cue": "largest planet",
+            "hit": true
+          },
+          {
+            "fact": "George Orwell wrote the novel 1984.",
+            "cue": "novel 1984",
+            "hit": true
+          },
+          {
+            "fact": "The Eiffel Tower is located in Paris.",
+            "cue": "Eiffel Tower",
+            "hit": true
+          },
+          {
+            "fact": "A leap year has 366 days.",
+            "cue": "leap year",
+            "hit": true
+          },
+          {
+            "fact": "Photosynthesis converts carbon dioxide and water into glucose.",
+            "cue": "photosynthesis",
+            "hit": true
+          },
+          {
+            "fact": "The chemical symbol for gold is Au.",
+            "cue": "symbol for gold",
+            "hit": true
+          },
+          {
+            "fact": "The Pacific Ocean is the largest ocean on Earth.",
+            "cue": "largest ocean",
+            "hit": true
+          },
+          {
+            "fact": "Canberra is the capital of Australia.",
+            "cue": "capital of Australia",
+            "hit": true
+          },
+          {
+            "fact": "Water boils at 100 degrees Celsius at sea level.",
+            "cue": "water boils",
+            "hit": true
+          },
+          {
+            "fact": "The capital of Japan is Tokyo.",
+            "cue": "capital of Japan",
+            "hit": true
+          }
+        ],
+        "duration_s": 0.012674808502197266
+      },
+      "duration_s": 0.016020536422729492
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "baseline",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "k": 5,
+        "n_facts": 12
+      },
+      "details": {
+        "kind": "memory_continuity",
+        "seed": 2,
+        "db_path": "/tmp/acl_trial__cpzqsyk/trial.sqlite3",
+        "facts": [
+          {
+            "fact": "An adult human skeleton has 206 bones.",
+            "cue": "206 bones",
+            "hit": true
+          },
+          {
+            "fact": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "cue": "light travels",
+            "hit": true
+          },
+          {
+            "fact": "Jupiter is the largest planet in the solar system.",
+            "cue": "largest planet",
+            "hit": true
+          },
+          {
+            "fact": "George Orwell wrote the novel 1984.",
+            "cue": "novel 1984",
+            "hit": true
+          },
+          {
+            "fact": "The Eiffel Tower is located in Paris.",
+            "cue": "Eiffel Tower",
+            "hit": true
+          },
+          {
+            "fact": "A leap year has 366 days.",
+            "cue": "leap year",
+            "hit": true
+          },
+          {
+            "fact": "Photosynthesis converts carbon dioxide and water into glucose.",
+            "cue": "photosynthesis",
+            "hit": true
+          },
+          {
+            "fact": "The chemical symbol for gold is Au.",
+            "cue": "symbol for gold",
+            "hit": true
+          },
+          {
+            "fact": "The Pacific Ocean is the largest ocean on Earth.",
+            "cue": "largest ocean",
+            "hit": true
+          },
+          {
+            "fact": "Canberra is the capital of Australia.",
+            "cue": "capital of Australia",
+            "hit": true
+          },
+          {
+            "fact": "Water boils at 100 degrees Celsius at sea level.",
+            "cue": "water boils",
+            "hit": true
+          },
+          {
+            "fact": "The capital of Japan is Tokyo.",
+            "cue": "capital of Japan",
+            "hit": true
+          }
+        ],
+        "duration_s": 0.0039098262786865234
+      },
+      "duration_s": 0.0041544437408447266
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "ablation:memory",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "k": 5,
+        "n_facts": 12
+      },
+      "details": {
+        "kind": "memory_continuity",
+        "seed": 2,
+        "db_path": "/tmp/acl_trial_2vhkgqxz/trial.sqlite3",
+        "facts": [
+          {
+            "fact": "An adult human skeleton has 206 bones.",
+            "cue": "206 bones",
+            "hit": true
+          },
+          {
+            "fact": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "cue": "light travels",
+            "hit": true
+          },
+          {
+            "fact": "Jupiter is the largest planet in the solar system.",
+            "cue": "largest planet",
+            "hit": true
+          },
+          {
+            "fact": "George Orwell wrote the novel 1984.",
+            "cue": "novel 1984",
+            "hit": true
+          },
+          {
+            "fact": "The Eiffel Tower is located in Paris.",
+            "cue": "Eiffel Tower",
+            "hit": true
+          },
+          {
+            "fact": "A leap year has 366 days.",
+            "cue": "leap year",
+            "hit": true
+          },
+          {
+            "fact": "Photosynthesis converts carbon dioxide and water into glucose.",
+            "cue": "photosynthesis",
+            "hit": true
+          },
+          {
+            "fact": "The chemical symbol for gold is Au.",
+            "cue": "symbol for gold",
+            "hit": true
+          },
+          {
+            "fact": "The Pacific Ocean is the largest ocean on Earth.",
+            "cue": "largest ocean",
+            "hit": true
+          },
+          {
+            "fact": "Canberra is the capital of Australia.",
+            "cue": "capital of Australia",
+            "hit": true
+          },
+          {
+            "fact": "Water boils at 100 degrees Celsius at sea level.",
+            "cue": "water boils",
+            "hit": true
+          },
+          {
+            "fact": "The capital of Japan is Tokyo.",
+            "cue": "capital of Japan",
+            "hit": true
+          }
+        ],
+        "duration_s": 0.007281303405761719
+      },
+      "duration_s": 0.009503364562988281
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "full",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "k": 5,
+        "n_facts": 12
+      },
+      "details": {
+        "kind": "memory_continuity",
+        "seed": 3,
+        "db_path": "/tmp/acl_trial_wzjapsmy/trial.sqlite3",
+        "facts": [
+          {
+            "fact": "Water boils at 100 degrees Celsius at sea level.",
+            "cue": "water boils",
+            "hit": true
+          },
+          {
+            "fact": "The Eiffel Tower is located in Paris.",
+            "cue": "Eiffel Tower",
+            "hit": true
+          },
+          {
+            "fact": "Canberra is the capital of Australia.",
+            "cue": "capital of Australia",
+            "hit": true
+          },
+          {
+            "fact": "The capital of Japan is Tokyo.",
+            "cue": "capital of Japan",
+            "hit": true
+          },
+          {
+            "fact": "A leap year has 366 days.",
+            "cue": "leap year",
+            "hit": true
+          },
+          {
+            "fact": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "cue": "light travels",
+            "hit": true
+          },
+          {
+            "fact": "George Orwell wrote the novel 1984.",
+            "cue": "novel 1984",
+            "hit": true
+          },
+          {
+            "fact": "The Pacific Ocean is the largest ocean on Earth.",
+            "cue": "largest ocean",
+            "hit": true
+          },
+          {
+            "fact": "The chemical symbol for gold is Au.",
+            "cue": "symbol for gold",
+            "hit": true
+          },
+          {
+            "fact": "Photosynthesis converts carbon dioxide and water into glucose.",
+            "cue": "photosynthesis",
+            "hit": true
+          },
+          {
+            "fact": "An adult human skeleton has 206 bones.",
+            "cue": "206 bones",
+            "hit": true
+          },
+          {
+            "fact": "Jupiter is the largest planet in the solar system.",
+            "cue": "largest planet",
+            "hit": true
+          }
+        ],
+        "duration_s": 0.012461662292480469
+      },
+      "duration_s": 0.015926361083984375
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "baseline",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "k": 5,
+        "n_facts": 12
+      },
+      "details": {
+        "kind": "memory_continuity",
+        "seed": 3,
+        "db_path": "/tmp/acl_trial__yvzul_g/trial.sqlite3",
+        "facts": [
+          {
+            "fact": "Water boils at 100 degrees Celsius at sea level.",
+            "cue": "water boils",
+            "hit": true
+          },
+          {
+            "fact": "The Eiffel Tower is located in Paris.",
+            "cue": "Eiffel Tower",
+            "hit": true
+          },
+          {
+            "fact": "Canberra is the capital of Australia.",
+            "cue": "capital of Australia",
+            "hit": true
+          },
+          {
+            "fact": "The capital of Japan is Tokyo.",
+            "cue": "capital of Japan",
+            "hit": true
+          },
+          {
+            "fact": "A leap year has 366 days.",
+            "cue": "leap year",
+            "hit": true
+          },
+          {
+            "fact": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "cue": "light travels",
+            "hit": true
+          },
+          {
+            "fact": "George Orwell wrote the novel 1984.",
+            "cue": "novel 1984",
+            "hit": true
+          },
+          {
+            "fact": "The Pacific Ocean is the largest ocean on Earth.",
+            "cue": "largest ocean",
+            "hit": true
+          },
+          {
+            "fact": "The chemical symbol for gold is Au.",
+            "cue": "symbol for gold",
+            "hit": true
+          },
+          {
+            "fact": "Photosynthesis converts carbon dioxide and water into glucose.",
+            "cue": "photosynthesis",
+            "hit": true
+          },
+          {
+            "fact": "An adult human skeleton has 206 bones.",
+            "cue": "206 bones",
+            "hit": true
+          },
+          {
+            "fact": "Jupiter is the largest planet in the solar system.",
+            "cue": "largest planet",
+            "hit": true
+          }
+        ],
+        "duration_s": 0.003896474838256836
+      },
+      "duration_s": 0.00416254997253418
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "ablation:memory",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "k": 5,
+        "n_facts": 12
+      },
+      "details": {
+        "kind": "memory_continuity",
+        "seed": 3,
+        "db_path": "/tmp/acl_trial_67h_oxcj/trial.sqlite3",
+        "facts": [
+          {
+            "fact": "Water boils at 100 degrees Celsius at sea level.",
+            "cue": "water boils",
+            "hit": true
+          },
+          {
+            "fact": "The Eiffel Tower is located in Paris.",
+            "cue": "Eiffel Tower",
+            "hit": true
+          },
+          {
+            "fact": "Canberra is the capital of Australia.",
+            "cue": "capital of Australia",
+            "hit": true
+          },
+          {
+            "fact": "The capital of Japan is Tokyo.",
+            "cue": "capital of Japan",
+            "hit": true
+          },
+          {
+            "fact": "A leap year has 366 days.",
+            "cue": "leap year",
+            "hit": true
+          },
+          {
+            "fact": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "cue": "light travels",
+            "hit": true
+          },
+          {
+            "fact": "George Orwell wrote the novel 1984.",
+            "cue": "novel 1984",
+            "hit": true
+          },
+          {
+            "fact": "The Pacific Ocean is the largest ocean on Earth.",
+            "cue": "largest ocean",
+            "hit": true
+          },
+          {
+            "fact": "The chemical symbol for gold is Au.",
+            "cue": "symbol for gold",
+            "hit": true
+          },
+          {
+            "fact": "Photosynthesis converts carbon dioxide and water into glucose.",
+            "cue": "photosynthesis",
+            "hit": true
+          },
+          {
+            "fact": "An adult human skeleton has 206 bones.",
+            "cue": "206 bones",
+            "hit": true
+          },
+          {
+            "fact": "Jupiter is the largest planet in the solar system.",
+            "cue": "largest planet",
+            "hit": true
+          }
+        ],
+        "duration_s": 0.00829625129699707
+      },
+      "duration_s": 0.01165008544921875
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "full",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "k": 5,
+        "n_facts": 12
+      },
+      "details": {
+        "kind": "memory_continuity",
+        "seed": 4,
+        "db_path": "/tmp/acl_trial_mi9iq_5u/trial.sqlite3",
+        "facts": [
+          {
+            "fact": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "cue": "light travels",
+            "hit": true
+          },
+          {
+            "fact": "The chemical symbol for gold is Au.",
+            "cue": "symbol for gold",
+            "hit": true
+          },
+          {
+            "fact": "Photosynthesis converts carbon dioxide and water into glucose.",
+            "cue": "photosynthesis",
+            "hit": true
+          },
+          {
+            "fact": "Canberra is the capital of Australia.",
+            "cue": "capital of Australia",
+            "hit": true
+          },
+          {
+            "fact": "The Pacific Ocean is the largest ocean on Earth.",
+            "cue": "largest ocean",
+            "hit": true
+          },
+          {
+            "fact": "The capital of Japan is Tokyo.",
+            "cue": "capital of Japan",
+            "hit": true
+          },
+          {
+            "fact": "An adult human skeleton has 206 bones.",
+            "cue": "206 bones",
+            "hit": true
+          },
+          {
+            "fact": "The Eiffel Tower is located in Paris.",
+            "cue": "Eiffel Tower",
+            "hit": true
+          },
+          {
+            "fact": "A leap year has 366 days.",
+            "cue": "leap year",
+            "hit": true
+          },
+          {
+            "fact": "Water boils at 100 degrees Celsius at sea level.",
+            "cue": "water boils",
+            "hit": true
+          },
+          {
+            "fact": "George Orwell wrote the novel 1984.",
+            "cue": "novel 1984",
+            "hit": true
+          },
+          {
+            "fact": "Jupiter is the largest planet in the solar system.",
+            "cue": "largest planet",
+            "hit": true
+          }
+        ],
+        "duration_s": 0.04438185691833496
+      },
+      "duration_s": 0.04772210121154785
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "baseline",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "k": 5,
+        "n_facts": 12
+      },
+      "details": {
+        "kind": "memory_continuity",
+        "seed": 4,
+        "db_path": "/tmp/acl_trial_gsakqzew/trial.sqlite3",
+        "facts": [
+          {
+            "fact": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "cue": "light travels",
+            "hit": true
+          },
+          {
+            "fact": "The chemical symbol for gold is Au.",
+            "cue": "symbol for gold",
+            "hit": true
+          },
+          {
+            "fact": "Photosynthesis converts carbon dioxide and water into glucose.",
+            "cue": "photosynthesis",
+            "hit": true
+          },
+          {
+            "fact": "Canberra is the capital of Australia.",
+            "cue": "capital of Australia",
+            "hit": true
+          },
+          {
+            "fact": "The Pacific Ocean is the largest ocean on Earth.",
+            "cue": "largest ocean",
+            "hit": true
+          },
+          {
+            "fact": "The capital of Japan is Tokyo.",
+            "cue": "capital of Japan",
+            "hit": true
+          },
+          {
+            "fact": "An adult human skeleton has 206 bones.",
+            "cue": "206 bones",
+            "hit": true
+          },
+          {
+            "fact": "The Eiffel Tower is located in Paris.",
+            "cue": "Eiffel Tower",
+            "hit": true
+          },
+          {
+            "fact": "A leap year has 366 days.",
+            "cue": "leap year",
+            "hit": true
+          },
+          {
+            "fact": "Water boils at 100 degrees Celsius at sea level.",
+            "cue": "water boils",
+            "hit": true
+          },
+          {
+            "fact": "George Orwell wrote the novel 1984.",
+            "cue": "novel 1984",
+            "hit": true
+          },
+          {
+            "fact": "Jupiter is the largest planet in the solar system.",
+            "cue": "largest planet",
+            "hit": true
+          }
+        ],
+        "duration_s": 0.013596534729003906
+      },
+      "duration_s": 0.01391744613647461
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "ablation:memory",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "k": 5,
+        "n_facts": 12
+      },
+      "details": {
+        "kind": "memory_continuity",
+        "seed": 4,
+        "db_path": "/tmp/acl_trial_6rba1i7n/trial.sqlite3",
+        "facts": [
+          {
+            "fact": "Light travels at about 300000 kilometers per second in a vacuum.",
+            "cue": "light travels",
+            "hit": true
+          },
+          {
+            "fact": "The chemical symbol for gold is Au.",
+            "cue": "symbol for gold",
+            "hit": true
+          },
+          {
+            "fact": "Photosynthesis converts carbon dioxide and water into glucose.",
+            "cue": "photosynthesis",
+            "hit": true
+          },
+          {
+            "fact": "Canberra is the capital of Australia.",
+            "cue": "capital of Australia",
+            "hit": true
+          },
+          {
+            "fact": "The Pacific Ocean is the largest ocean on Earth.",
+            "cue": "largest ocean",
+            "hit": true
+          },
+          {
+            "fact": "The capital of Japan is Tokyo.",
+            "cue": "capital of Japan",
+            "hit": true
+          },
+          {
+            "fact": "An adult human skeleton has 206 bones.",
+            "cue": "206 bones",
+            "hit": true
+          },
+          {
+            "fact": "The Eiffel Tower is located in Paris.",
+            "cue": "Eiffel Tower",
+            "hit": true
+          },
+          {
+            "fact": "A leap year has 366 days.",
+            "cue": "leap year",
+            "hit": true
+          },
+          {
+            "fact": "Water boils at 100 degrees Celsius at sea level.",
+            "cue": "water boils",
+            "hit": true
+          },
+          {
+            "fact": "George Orwell wrote the novel 1984.",
+            "cue": "novel 1984",
+            "hit": true
+          },
+          {
+            "fact": "Jupiter is the largest planet in the solar system.",
+            "cue": "largest planet",
+            "hit": true
+          }
+        ],
+        "duration_s": 0.020585298538208008
+      },
+      "duration_s": 0.029021263122558594
+    }
+  ],
+  "summary": {
+    "conditions": {
+      "full": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "recall_at_k": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "k": {
+            "mean": 5.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "n_facts": {
+            "mean": 12.0,
+            "stdev": 0.0,
+            "n": 5
+          }
+        }
+      },
+      "baseline": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "recall_at_k": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "k": {
+            "mean": 5.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "n_facts": {
+            "mean": 12.0,
+            "stdev": 0.0,
+            "n": 5
+          }
+        }
+      },
+      "ablation:memory": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "recall_at_k": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "k": {
+            "mean": 5.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "n_facts": {
+            "mean": 12.0,
+            "stdev": 0.0,
+            "n": 5
+          }
+        }
+      }
+    },
+    "delta_vs_baseline": {
+      "recall_at_k": 0.0,
+      "k": 0.0,
+      "n_facts": 0.0
+    }
+  }
+}

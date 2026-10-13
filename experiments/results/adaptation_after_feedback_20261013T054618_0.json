@@ -1,0 +1,2781 @@
+{
+  "name": "adaptation_after_feedback",
+  "protocol_path": "/home/hatch/workspace/artificial-consciousness-lab/experiments/protocols/08_adaptation_after_feedback.json",
+  "lab_version": "0.1.0",
+  "git_sha": null,
+  "seed": 0,
+  "started_at": 1791870378.824408,
+  "finished_at": 1791870378.9074593,
+  "config_snapshot": {
+    "db_path": "./data/acl_mock.sqlite3",
+    "provider": "mock",
+    "provider_model": "",
+    "provider_params": {
+      "timeout_s": 30
+    },
+    "workspace_capacity": 7,
+    "budgets": {
+      "max_steps": 20,
+      "max_tokens": 8000,
+      "max_wall_time_s": 120.0,
+      "max_tool_calls": 10
+    },
+    "autonomous_enabled": true,
+    "approval_required_default": false,
+    "log_level": "INFO",
+    "seed": 42,
+    "results_dir": "experiments/results",
+    "components": {
+      "memory": true,
+      "self_model": true,
+      "workspace": true,
+      "metacognition": true,
+      "attention": true,
+      "learning": true
+    },
+    "extra": {}
+  },
+  "notes": [
+    "research_question: Can the system incorporate explicit corrective feedback into its semantic memory and then use it \u2014 i.e., does it get a second attempt right because the correction was stored and retrieved, not because it was repeated in the prompt?",
+    "hypothesis: After corrective feedback is injected into semantic memory (a corrected answer to a question the system got wrong), the system's accuracy on a re-run will improve, because semantic recall feeds corrected facts back into the workspace prompt context.",
+    "failure_condition: Fail if post-feedback accuracy is not higher than pre-feedback accuracy (paired t-test, alpha=0.05) across trials, OR if the injected correction cannot be retrieved from semantic memory afterward (the feedback went nowhere), OR if accuracy IMPROVES but the corrected fact is absent from memory (improvement without mechanism \u2014 likely prompt leakage, not adaptation).",
+    "limitations: This is supervised correction, not autonomous learning: the feedback is handed to the system, not discovered. It measures the retrieval-and-use path, not the ability to detect one's own errors. The before/after design risks prompt-order effects (the correction may simply linger in context). Only tests correction of factual answers, not strategy adaptation \u2014 strategy selection is Learning's job and needs its own protocol."
+  ],
+  "trials": [
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "full",
+      "metrics": {
+        "accuracy": 0.6,
+        "brier": 0.22149999999999997,
+        "ece": 0.15499999999999997,
+        "n_questions": 20,
+        "n_parse_failures": 0
+      },
+      "details": {
+        "kind": "qa_calibration",
+        "seed": 0,
+        "via": "loop",
+        "questions": [
+          {
+            "question": "What is the capital of France?",
+            "expected": "Paris",
+            "answer": "Paris",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Japan?",
+            "expected": "Tokyo",
+            "answer": "Tokyo",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Australia?",
+            "expected": "Canberra",
+            "answer": "Canberra",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest planet in the solar system?",
+            "expected": "Jupiter",
+            "answer": "2",
+            "correct": false,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical formula of water?",
+            "expected": "H2O",
+            "answer": "H2O",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "Who wrote the novel 1984?",
+            "expected": "George Orwell",
+            "answer": "George Orwell",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Canada?",
+            "expected": "Ottawa",
+            "answer": "Ottawa",
+            "correct": true,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "How many continents are there on Earth?",
+            "expected": "7",
+            "answer": "Pound sterling",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "At what temperature does water boil at sea level, in degrees Celsius?",
+            "expected": "100",
+            "answer": "H2O",
+            "correct": false,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the currency of the United Kingdom?",
+            "expected": "Pound sterling",
+            "answer": "Pound sterling",
+            "correct": true,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest ocean on Earth?",
+            "expected": "Pacific Ocean",
+            "answer": "366",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "How many days are in a leap year?",
+            "expected": "366",
+            "answer": "366",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the smallest prime number?",
+            "expected": "2",
+            "answer": "2",
+            "correct": true,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "Which planet is known as the Red Planet?",
+            "expected": "Mars",
+            "answer": "Mars",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Egypt?",
+            "expected": "Cairo",
+            "answer": "1969",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical symbol for gold?",
+            "expected": "Au",
+            "answer": "100",
+            "correct": false,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "In which year did humans first land on the Moon?",
+            "expected": "1969",
+            "answer": "6",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the largest mammal in the world?",
+            "expected": "Blue whale",
+            "answer": "Blue whale",
+            "correct": true,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "How many sides does a hexagon have?",
+            "expected": "6",
+            "answer": "6",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Brazil?",
+            "expected": "Brasilia",
+            "answer": "Pacific Ocean",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          }
+        ],
+        "duration_s": 0.0007753372192382812
+      },
+      "duration_s": 0.04152536392211914
+    },
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "baseline",
+      "metrics": {
+        "accuracy": 0.6,
+        "brier": 0.22149999999999997,
+        "ece": 0.15499999999999997
+      },
+      "details": {
+        "kind": "qa_calibration",
+        "seed": 0,
+        "via": "baseline",
+        "n_questions": 20,
+        "provider_calls": 20,
+        "estimated_tokens": 730,
+        "fallback_dataset_used": false,
+        "per_item": [
+          {
+            "question": "What is the capital of France?",
+            "expected": "Paris",
+            "parsed_answer": "Paris",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Japan?",
+            "expected": "Tokyo",
+            "parsed_answer": "Tokyo",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Australia?",
+            "expected": "Canberra",
+            "parsed_answer": "Canberra",
+            "confidence": 0.95,
+            "correct": true
+          },
+          {
+            "question": "Which is the largest planet in the solar system?",
+            "expected": "Jupiter",
+            "parsed_answer": "2",
+            "confidence": 0.75,
+            "correct": false
+          },
+          {
+            "question": "What is the chemical formula of water?",
+            "expected": "H2O",
+            "parsed_answer": "H2O",
+            "confidence": 0.95,
+            "correct": true
+          },
+          {
+            "question": "Who wrote the novel 1984?",
+            "expected": "George Orwell",
+            "parsed_answer": "George Orwell",
+            "confidence": 0.65,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Canada?",
+            "expected": "Ottawa",
+            "parsed_answer": "Ottawa",
+            "confidence": 0.75,
+            "correct": true
+          },
+          {
+            "question": "How many continents are there on Earth?",
+            "expected": "7",
+            "parsed_answer": "Pound sterling",
+            "confidence": 0.55,
+            "correct": false
+          },
+          {
+            "question": "At what temperature does water boil at sea level, in degrees Celsius?",
+            "expected": "100",
+            "parsed_answer": "H2O",
+            "confidence": 0.95,
+            "correct": false
+          },
+          {
+            "question": "What is the currency of the United Kingdom?",
+            "expected": "Pound sterling",
+            "parsed_answer": "Pound sterling",
+            "confidence": 0.75,
+            "correct": true
+          },
+          {
+            "question": "Which is the largest ocean on Earth?",
+            "expected": "Pacific Ocean",
+            "parsed_answer": "366",
+            "confidence": 0.55,
+            "correct": false
+          },
+          {
+            "question": "How many days are in a leap year?",
+            "expected": "366",
+            "parsed_answer": "366",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "What is the smallest prime number?",
+            "expected": "2",
+            "parsed_answer": "2",
+            "confidence": 0.75,
+            "correct": true
+          },
+          {
+            "question": "Which planet is known as the Red Planet?",
+            "expected": "Mars",
+            "parsed_answer": "Mars",
+            "confidence": 0.95,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Egypt?",
+            "expected": "Cairo",
+            "parsed_answer": "1969",
+            "confidence": 0.65,
+            "correct": false
+          },
+          {
+            "question": "What is the chemical symbol for gold?",
+            "expected": "Au",
+            "parsed_answer": "100",
+            "confidence": 0.85,
+            "correct": false
+          },
+          {
+            "question": "In which year did humans first land on the Moon?",
+            "expected": "1969",
+            "parsed_answer": "6",
+            "confidence": 0.55,
+            "correct": false
+          },
+          {
+            "question": "What is the largest mammal in the world?",
+            "expected": "Blue whale",
+            "parsed_answer": "Blue whale",
+            "confidence": 0.55,
+            "correct": true
+          },
+          {
+            "question": "How many sides does a hexagon have?",
+            "expected": "6",
+            "parsed_answer": "6",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Brazil?",
+            "expected": "Brasilia",
+            "parsed_answer": "Pacific Ocean",
+            "confidence": 0.55,
+            "correct": false
+          }
+        ],
+        "task": "qa_calibration",
+        "max_cycles": 5,
+        "agent": "baseline",
+        "duration_s": 0.0005970001220703125
+      },
+      "duration_s": 0.0027289390563964844
+    },
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "ablation:memory",
+      "metrics": {
+        "accuracy": 0.6,
+        "brier": 0.22149999999999997,
+        "ece": 0.15499999999999997,
+        "n_questions": 20,
+        "n_parse_failures": 0
+      },
+      "details": {
+        "kind": "qa_calibration",
+        "seed": 0,
+        "via": "loop",
+        "questions": [
+          {
+            "question": "What is the capital of France?",
+            "expected": "Paris",
+            "answer": "Paris",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Japan?",
+            "expected": "Tokyo",
+            "answer": "Tokyo",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Australia?",
+            "expected": "Canberra",
+            "answer": "Canberra",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest planet in the solar system?",
+            "expected": "Jupiter",
+            "answer": "2",
+            "correct": false,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical formula of water?",
+            "expected": "H2O",
+            "answer": "H2O",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "Who wrote the novel 1984?",
+            "expected": "George Orwell",
+            "answer": "George Orwell",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Canada?",
+            "expected": "Ottawa",
+            "answer": "Ottawa",
+            "correct": true,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "How many continents are there on Earth?",
+            "expected": "7",
+            "answer": "Pound sterling",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "At what temperature does water boil at sea level, in degrees Celsius?",
+            "expected": "100",
+            "answer": "H2O",
+            "correct": false,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the currency of the United Kingdom?",
+            "expected": "Pound sterling",
+            "answer": "Pound sterling",
+            "correct": true,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest ocean on Earth?",
+            "expected": "Pacific Ocean",
+            "answer": "366",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "How many days are in a leap year?",
+            "expected": "366",
+            "answer": "366",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the smallest prime number?",
+            "expected": "2",
+            "answer": "2",
+            "correct": true,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "Which planet is known as the Red Planet?",
+            "expected": "Mars",
+            "answer": "Mars",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Egypt?",
+            "expected": "Cairo",
+            "answer": "1969",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical symbol for gold?",
+            "expected": "Au",
+            "answer": "100",
+            "correct": false,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "In which year did humans first land on the Moon?",
+            "expected": "1969",
+            "answer": "6",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the largest mammal in the world?",
+            "expected": "Blue whale",
+            "answer": "Blue whale",
+            "correct": true,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "How many sides does a hexagon have?",
+            "expected": "6",
+            "answer": "6",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Brazil?",
+            "expected": "Brasilia",
+            "answer": "Pacific Ocean",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          }
+        ],
+        "duration_s": 0.0004932880401611328
+      },
+      "duration_s": 0.0038373470306396484
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "full",
+      "metrics": {
+        "accuracy": 0.75,
+        "brier": 0.1635,
+        "ece": 0.06500000000000003,
+        "n_questions": 20,
+        "n_parse_failures": 0
+      },
+      "details": {
+        "kind": "qa_calibration",
+        "seed": 1,
+        "via": "loop",
+        "questions": [
+          {
+            "question": "What is the capital of France?",
+            "expected": "Paris",
+            "answer": "Paris",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Japan?",
+            "expected": "Tokyo",
+            "answer": "Tokyo",
+            "correct": true,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Australia?",
+            "expected": "Canberra",
+            "answer": "Canberra",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest planet in the solar system?",
+            "expected": "Jupiter",
+            "answer": "Jupiter",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical formula of water?",
+            "expected": "H2O",
+            "answer": "H2O",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "Who wrote the novel 1984?",
+            "expected": "George Orwell",
+            "answer": "Mars",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Canada?",
+            "expected": "Ottawa",
+            "answer": "Ottawa",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "How many continents are there on Earth?",
+            "expected": "7",
+            "answer": "Pound sterling",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "At what temperature does water boil at sea level, in degrees Celsius?",
+            "expected": "100",
+            "answer": "100",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the currency of the United Kingdom?",
+            "expected": "Pound sterling",
+            "answer": "Paris",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest ocean on Earth?",
+            "expected": "Pacific Ocean",
+            "answer": "Pacific Ocean",
+            "correct": true,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "How many days are in a leap year?",
+            "expected": "366",
+            "answer": "366",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the smallest prime number?",
+            "expected": "2",
+            "answer": "2",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "Which planet is known as the Red Planet?",
+            "expected": "Mars",
+            "answer": "Mars",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Egypt?",
+            "expected": "Cairo",
+            "answer": "Cairo",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical symbol for gold?",
+            "expected": "Au",
+            "answer": "6",
+            "correct": false,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "In which year did humans first land on the Moon?",
+            "expected": "1969",
+            "answer": "1969",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the largest mammal in the world?",
+            "expected": "Blue whale",
+            "answer": "Pound sterling",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "How many sides does a hexagon have?",
+            "expected": "6",
+            "answer": "6",
+            "correct": true,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Brazil?",
+            "expected": "Brasilia",
+            "answer": "Brasilia",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          }
+        ],
+        "duration_s": 0.000453948974609375
+      },
+      "duration_s": 0.005166530609130859
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "baseline",
+      "metrics": {
+        "accuracy": 0.75,
+        "brier": 0.1635,
+        "ece": 0.06500000000000003
+      },
+      "details": {
+        "kind": "qa_calibration",
+        "seed": 1,
+        "via": "baseline",
+        "n_questions": 20,
+        "provider_calls": 20,
+        "estimated_tokens": 728,
+        "fallback_dataset_used": false,
+        "per_item": [
+          {
+            "question": "What is the capital of France?",
+            "expected": "Paris",
+            "parsed_answer": "Paris",
+            "confidence": 0.65,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Japan?",
+            "expected": "Tokyo",
+            "parsed_answer": "Tokyo",
+            "confidence": 0.55,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Australia?",
+            "expected": "Canberra",
+            "parsed_answer": "Canberra",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "Which is the largest planet in the solar system?",
+            "expected": "Jupiter",
+            "parsed_answer": "Jupiter",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "What is the chemical formula of water?",
+            "expected": "H2O",
+            "parsed_answer": "H2O",
+            "confidence": 0.65,
+            "correct": true
+          },
+          {
+            "question": "Who wrote the novel 1984?",
+            "expected": "George Orwell",
+            "parsed_answer": "Mars",
+            "confidence": 0.55,
+            "correct": false
+          },
+          {
+            "question": "What is the capital of Canada?",
+            "expected": "Ottawa",
+            "parsed_answer": "Ottawa",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "How many continents are there on Earth?",
+            "expected": "7",
+            "parsed_answer": "Pound sterling",
+            "confidence": 0.55,
+            "correct": false
+          },
+          {
+            "question": "At what temperature does water boil at sea level, in degrees Celsius?",
+            "expected": "100",
+            "parsed_answer": "100",
+            "confidence": 0.65,
+            "correct": true
+          },
+          {
+            "question": "What is the currency of the United Kingdom?",
+            "expected": "Pound sterling",
+            "parsed_answer": "Paris",
+            "confidence": 0.55,
+            "correct": false
+          },
+          {
+            "question": "Which is the largest ocean on Earth?",
+            "expected": "Pacific Ocean",
+            "parsed_answer": "Pacific Ocean",
+            "confidence": 0.55,
+            "correct": true
+          },
+          {
+            "question": "How many days are in a leap year?",
+            "expected": "366",
+            "parsed_answer": "366",
+            "confidence": 0.95,
+            "correct": true
+          },
+          {
+            "question": "What is the smallest prime number?",
+            "expected": "2",
+            "parsed_answer": "2",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "Which planet is known as the Red Planet?",
+            "expected": "Mars",
+            "parsed_answer": "Mars",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Egypt?",
+            "expected": "Cairo",
+            "parsed_answer": "Cairo",
+            "confidence": 0.95,
+            "correct": true
+          },
+          {
+            "question": "What is the chemical symbol for gold?",
+            "expected": "Au",
+            "parsed_answer": "6",
+            "confidence": 0.85,
+            "correct": false
+          },
+          {
+            "question": "In which year did humans first land on the Moon?",
+            "expected": "1969",
+            "parsed_answer": "1969",
+            "confidence": 0.65,
+            "correct": true
+          },
+          {
+            "question": "What is the largest mammal in the world?",
+            "expected": "Blue whale",
+            "parsed_answer": "Pound sterling",
+            "confidence": 0.65,
+            "correct": false
+          },
+          {
+            "question": "How many sides does a hexagon have?",
+            "expected": "6",
+            "parsed_answer": "6",
+            "confidence": 0.55,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Brazil?",
+            "expected": "Brasilia",
+            "parsed_answer": "Brasilia",
+            "confidence": 0.95,
+            "correct": true
+          }
+        ],
+        "task": "qa_calibration",
+        "max_cycles": 5,
+        "agent": "baseline",
+        "duration_s": 0.0004520416259765625
+      },
+      "duration_s": 0.0007996559143066406
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "ablation:memory",
+      "metrics": {
+        "accuracy": 0.75,
+        "brier": 0.1635,
+        "ece": 0.06500000000000003,
+        "n_questions": 20,
+        "n_parse_failures": 0
+      },
+      "details": {
+        "kind": "qa_calibration",
+        "seed": 1,
+        "via": "loop",
+        "questions": [
+          {
+            "question": "What is the capital of France?",
+            "expected": "Paris",
+            "answer": "Paris",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Japan?",
+            "expected": "Tokyo",
+            "answer": "Tokyo",
+            "correct": true,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Australia?",
+            "expected": "Canberra",
+            "answer": "Canberra",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest planet in the solar system?",
+            "expected": "Jupiter",
+            "answer": "Jupiter",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical formula of water?",
+            "expected": "H2O",
+            "answer": "H2O",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "Who wrote the novel 1984?",
+            "expected": "George Orwell",
+            "answer": "Mars",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Canada?",
+            "expected": "Ottawa",
+            "answer": "Ottawa",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "How many continents are there on Earth?",
+            "expected": "7",
+            "answer": "Pound sterling",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "At what temperature does water boil at sea level, in degrees Celsius?",
+            "expected": "100",
+            "answer": "100",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the currency of the United Kingdom?",
+            "expected": "Pound sterling",
+            "answer": "Paris",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest ocean on Earth?",
+            "expected": "Pacific Ocean",
+            "answer": "Pacific Ocean",
+            "correct": true,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "How many days are in a leap year?",
+            "expected": "366",
+            "answer": "366",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the smallest prime number?",
+            "expected": "2",
+            "answer": "2",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "Which planet is known as the Red Planet?",
+            "expected": "Mars",
+            "answer": "Mars",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Egypt?",
+            "expected": "Cairo",
+            "answer": "Cairo",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical symbol for gold?",
+            "expected": "Au",
+            "answer": "6",
+            "correct": false,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "In which year did humans first land on the Moon?",
+            "expected": "1969",
+            "answer": "1969",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the largest mammal in the world?",
+            "expected": "Blue whale",
+            "answer": "Pound sterling",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "How many sides does a hexagon have?",
+            "expected": "6",
+            "answer": "6",
+            "correct": true,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Brazil?",
+            "expected": "Brasilia",
+            "answer": "Brasilia",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          }
+        ],
+        "duration_s": 0.0004456043243408203
+      },
+      "duration_s": 0.0031838417053222656
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "full",
+      "metrics": {
+        "accuracy": 0.55,
+        "brier": 0.2815,
+        "ece": 0.235,
+        "n_questions": 20,
+        "n_parse_failures": 0
+      },
+      "details": {
+        "kind": "qa_calibration",
+        "seed": 2,
+        "via": "loop",
+        "questions": [
+          {
+            "question": "What is the capital of France?",
+            "expected": "Paris",
+            "answer": "Paris",
+            "correct": true,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Japan?",
+            "expected": "Tokyo",
+            "answer": "Pacific Ocean",
+            "correct": false,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Australia?",
+            "expected": "Canberra",
+            "answer": "Canberra",
+            "correct": true,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest planet in the solar system?",
+            "expected": "Jupiter",
+            "answer": "Jupiter",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical formula of water?",
+            "expected": "H2O",
+            "answer": "Mars",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "Who wrote the novel 1984?",
+            "expected": "George Orwell",
+            "answer": "George Orwell",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Canada?",
+            "expected": "Ottawa",
+            "answer": "Ottawa",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "How many continents are there on Earth?",
+            "expected": "7",
+            "answer": "7",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "At what temperature does water boil at sea level, in degrees Celsius?",
+            "expected": "100",
+            "answer": "2",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the currency of the United Kingdom?",
+            "expected": "Pound sterling",
+            "answer": "Mars",
+            "correct": false,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest ocean on Earth?",
+            "expected": "Pacific Ocean",
+            "answer": "Blue whale",
+            "correct": false,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "How many days are in a leap year?",
+            "expected": "366",
+            "answer": "366",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the smallest prime number?",
+            "expected": "2",
+            "answer": "2",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "Which planet is known as the Red Planet?",
+            "expected": "Mars",
+            "answer": "Mars",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Egypt?",
+            "expected": "Cairo",
+            "answer": "Cairo",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical symbol for gold?",
+            "expected": "Au",
+            "answer": "6",
+            "correct": false,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "In which year did humans first land on the Moon?",
+            "expected": "1969",
+            "answer": "Cairo",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the largest mammal in the world?",
+            "expected": "Blue whale",
+            "answer": "Blue whale",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "How many sides does a hexagon have?",
+            "expected": "6",
+            "answer": "366",
+            "correct": false,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Brazil?",
+            "expected": "Brasilia",
+            "answer": "Cairo",
+            "correct": false,
+            "confidence": 0.75,
+            "parse_ok": true
+          }
+        ],
+        "duration_s": 0.0004899501800537109
+      },
+      "duration_s": 0.004321575164794922
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "baseline",
+      "metrics": {
+        "accuracy": 0.6,
+        "brier": 0.2565,
+        "ece": 0.18499999999999997
+      },
+      "details": {
+        "kind": "qa_calibration",
+        "seed": 2,
+        "via": "baseline",
+        "n_questions": 20,
+        "provider_calls": 20,
+        "estimated_tokens": 729,
+        "fallback_dataset_used": false,
+        "per_item": [
+          {
+            "question": "What is the capital of France?",
+            "expected": "Paris",
+            "parsed_answer": "Paris",
+            "confidence": 0.55,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Japan?",
+            "expected": "Tokyo",
+            "parsed_answer": "Pacific Ocean",
+            "confidence": 0.75,
+            "correct": false
+          },
+          {
+            "question": "What is the capital of Australia?",
+            "expected": "Canberra",
+            "parsed_answer": "Canberra",
+            "confidence": 0.75,
+            "correct": true
+          },
+          {
+            "question": "Which is the largest planet in the solar system?",
+            "expected": "Jupiter",
+            "parsed_answer": "Jupiter",
+            "confidence": 0.95,
+            "correct": true
+          },
+          {
+            "question": "What is the chemical formula of water?",
+            "expected": "H2O",
+            "parsed_answer": "Mars",
+            "confidence": 0.65,
+            "correct": false
+          },
+          {
+            "question": "Who wrote the novel 1984?",
+            "expected": "George Orwell",
+            "parsed_answer": "George Orwell",
+            "confidence": 0.95,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Canada?",
+            "expected": "Ottawa",
+            "parsed_answer": "Ottawa",
+            "confidence": 0.95,
+            "correct": true
+          },
+          {
+            "question": "How many continents are there on Earth?",
+            "expected": "7",
+            "parsed_answer": "7",
+            "confidence": 0.95,
+            "correct": true
+          },
+          {
+            "question": "At what temperature does water boil at sea level, in degrees Celsius?",
+            "expected": "100",
+            "parsed_answer": "2",
+            "confidence": 0.55,
+            "correct": false
+          },
+          {
+            "question": "What is the currency of the United Kingdom?",
+            "expected": "Pound sterling",
+            "parsed_answer": "Mars",
+            "confidence": 0.85,
+            "correct": false
+          },
+          {
+            "question": "Which is the largest ocean on Earth?",
+            "expected": "Pacific Ocean",
+            "parsed_answer": "Blue whale",
+            "confidence": 0.85,
+            "correct": false
+          },
+          {
+            "question": "How many days are in a leap year?",
+            "expected": "366",
+            "parsed_answer": "366",
+            "confidence": 0.65,
+            "correct": true
+          },
+          {
+            "question": "What is the smallest prime number?",
+            "expected": "2",
+            "parsed_answer": "2",
+            "confidence": 0.65,
+            "correct": true
+          },
+          {
+            "question": "Which planet is known as the Red Planet?",
+            "expected": "Mars",
+            "parsed_answer": "Mars",
+            "confidence": 0.65,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Egypt?",
+            "expected": "Cairo",
+            "parsed_answer": "Cairo",
+            "confidence": 0.65,
+            "correct": true
+          },
+          {
+            "question": "What is the chemical symbol for gold?",
+            "expected": "Au",
+            "parsed_answer": "6",
+            "confidence": 0.75,
+            "correct": false
+          },
+          {
+            "question": "In which year did humans first land on the Moon?",
+            "expected": "1969",
+            "parsed_answer": "Cairo",
+            "confidence": 0.65,
+            "correct": false
+          },
+          {
+            "question": "What is the largest mammal in the world?",
+            "expected": "Blue whale",
+            "parsed_answer": "Blue whale",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "How many sides does a hexagon have?",
+            "expected": "6",
+            "parsed_answer": "366",
+            "confidence": 0.75,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Brazil?",
+            "expected": "Brasilia",
+            "parsed_answer": "Cairo",
+            "confidence": 0.75,
+            "correct": false
+          }
+        ],
+        "task": "qa_calibration",
+        "max_cycles": 5,
+        "agent": "baseline",
+        "duration_s": 0.00046372413635253906
+      },
+      "duration_s": 0.0010838508605957031
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "ablation:memory",
+      "metrics": {
+        "accuracy": 0.55,
+        "brier": 0.2815,
+        "ece": 0.235,
+        "n_questions": 20,
+        "n_parse_failures": 0
+      },
+      "details": {
+        "kind": "qa_calibration",
+        "seed": 2,
+        "via": "loop",
+        "questions": [
+          {
+            "question": "What is the capital of France?",
+            "expected": "Paris",
+            "answer": "Paris",
+            "correct": true,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Japan?",
+            "expected": "Tokyo",
+            "answer": "Pacific Ocean",
+            "correct": false,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Australia?",
+            "expected": "Canberra",
+            "answer": "Canberra",
+            "correct": true,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest planet in the solar system?",
+            "expected": "Jupiter",
+            "answer": "Jupiter",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical formula of water?",
+            "expected": "H2O",
+            "answer": "Mars",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "Who wrote the novel 1984?",
+            "expected": "George Orwell",
+            "answer": "George Orwell",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Canada?",
+            "expected": "Ottawa",
+            "answer": "Ottawa",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "How many continents are there on Earth?",
+            "expected": "7",
+            "answer": "7",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "At what temperature does water boil at sea level, in degrees Celsius?",
+            "expected": "100",
+            "answer": "2",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the currency of the United Kingdom?",
+            "expected": "Pound sterling",
+            "answer": "Mars",
+            "correct": false,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest ocean on Earth?",
+            "expected": "Pacific Ocean",
+            "answer": "Blue whale",
+            "correct": false,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "How many days are in a leap year?",
+            "expected": "366",
+            "answer": "366",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the smallest prime number?",
+            "expected": "2",
+            "answer": "2",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "Which planet is known as the Red Planet?",
+            "expected": "Mars",
+            "answer": "Mars",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Egypt?",
+            "expected": "Cairo",
+            "answer": "Cairo",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical symbol for gold?",
+            "expected": "Au",
+            "answer": "6",
+            "correct": false,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "In which year did humans first land on the Moon?",
+            "expected": "1969",
+            "answer": "Cairo",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the largest mammal in the world?",
+            "expected": "Blue whale",
+            "answer": "Blue whale",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "How many sides does a hexagon have?",
+            "expected": "6",
+            "answer": "366",
+            "correct": false,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Brazil?",
+            "expected": "Brasilia",
+            "answer": "Cairo",
+            "correct": false,
+            "confidence": 0.75,
+            "parse_ok": true
+          }
+        ],
+        "duration_s": 0.0004799365997314453
+      },
+      "duration_s": 0.003068685531616211
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "full",
+      "metrics": {
+        "accuracy": 0.75,
+        "brier": 0.1315,
+        "ece": 0.14,
+        "n_questions": 20,
+        "n_parse_failures": 0
+      },
+      "details": {
+        "kind": "qa_calibration",
+        "seed": 3,
+        "via": "loop",
+        "questions": [
+          {
+            "question": "What is the capital of France?",
+            "expected": "Paris",
+            "answer": "Paris",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Japan?",
+            "expected": "Tokyo",
+            "answer": "Tokyo",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Australia?",
+            "expected": "Canberra",
+            "answer": "Canberra",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest planet in the solar system?",
+            "expected": "Jupiter",
+            "answer": "Jupiter",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical formula of water?",
+            "expected": "H2O",
+            "answer": "1969",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "Who wrote the novel 1984?",
+            "expected": "George Orwell",
+            "answer": "George Orwell",
+            "correct": true,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Canada?",
+            "expected": "Ottawa",
+            "answer": "1969",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "How many continents are there on Earth?",
+            "expected": "7",
+            "answer": "7",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "At what temperature does water boil at sea level, in degrees Celsius?",
+            "expected": "100",
+            "answer": "100",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the currency of the United Kingdom?",
+            "expected": "Pound sterling",
+            "answer": "Pound sterling",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest ocean on Earth?",
+            "expected": "Pacific Ocean",
+            "answer": "Blue whale",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "How many days are in a leap year?",
+            "expected": "366",
+            "answer": "366",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the smallest prime number?",
+            "expected": "2",
+            "answer": "2",
+            "correct": true,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "Which planet is known as the Red Planet?",
+            "expected": "Mars",
+            "answer": "Mars",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Egypt?",
+            "expected": "Cairo",
+            "answer": "100",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical symbol for gold?",
+            "expected": "Au",
+            "answer": "Au",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "In which year did humans first land on the Moon?",
+            "expected": "1969",
+            "answer": "1969",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the largest mammal in the world?",
+            "expected": "Blue whale",
+            "answer": "Blue whale",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "How many sides does a hexagon have?",
+            "expected": "6",
+            "answer": "6",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Brazil?",
+            "expected": "Brasilia",
+            "answer": "Jupiter",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          }
+        ],
+        "duration_s": 0.00044989585876464844
+      },
+      "duration_s": 0.005007028579711914
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "baseline",
+      "metrics": {
+        "accuracy": 0.75,
+        "brier": 0.1315,
+        "ece": 0.14
+      },
+      "details": {
+        "kind": "qa_calibration",
+        "seed": 3,
+        "via": "baseline",
+        "n_questions": 20,
+        "provider_calls": 20,
+        "estimated_tokens": 729,
+        "fallback_dataset_used": false,
+        "per_item": [
+          {
+            "question": "What is the capital of France?",
+            "expected": "Paris",
+            "parsed_answer": "Paris",
+            "confidence": 0.65,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Japan?",
+            "expected": "Tokyo",
+            "parsed_answer": "Tokyo",
+            "confidence": 0.65,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Australia?",
+            "expected": "Canberra",
+            "parsed_answer": "Canberra",
+            "confidence": 0.95,
+            "correct": true
+          },
+          {
+            "question": "Which is the largest planet in the solar system?",
+            "expected": "Jupiter",
+            "parsed_answer": "Jupiter",
+            "confidence": 0.95,
+            "correct": true
+          },
+          {
+            "question": "What is the chemical formula of water?",
+            "expected": "H2O",
+            "parsed_answer": "1969",
+            "confidence": 0.55,
+            "correct": false
+          },
+          {
+            "question": "Who wrote the novel 1984?",
+            "expected": "George Orwell",
+            "parsed_answer": "George Orwell",
+            "confidence": 0.75,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Canada?",
+            "expected": "Ottawa",
+            "parsed_answer": "1969",
+            "confidence": 0.65,
+            "correct": false
+          },
+          {
+            "question": "How many continents are there on Earth?",
+            "expected": "7",
+            "parsed_answer": "7",
+            "confidence": 0.95,
+            "correct": true
+          },
+          {
+            "question": "At what temperature does water boil at sea level, in degrees Celsius?",
+            "expected": "100",
+            "parsed_answer": "100",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "What is the currency of the United Kingdom?",
+            "expected": "Pound sterling",
+            "parsed_answer": "Pound sterling",
+            "confidence": 0.65,
+            "correct": true
+          },
+          {
+            "question": "Which is the largest ocean on Earth?",
+            "expected": "Pacific Ocean",
+            "parsed_answer": "Blue whale",
+            "confidence": 0.65,
+            "correct": false
+          },
+          {
+            "question": "How many days are in a leap year?",
+            "expected": "366",
+            "parsed_answer": "366",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "What is the smallest prime number?",
+            "expected": "2",
+            "parsed_answer": "2",
+            "confidence": 0.55,
+            "correct": true
+          },
+          {
+            "question": "Which planet is known as the Red Planet?",
+            "expected": "Mars",
+            "parsed_answer": "Mars",
+            "confidence": 0.95,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Egypt?",
+            "expected": "Cairo",
+            "parsed_answer": "100",
+            "confidence": 0.55,
+            "correct": false
+          },
+          {
+            "question": "What is the chemical symbol for gold?",
+            "expected": "Au",
+            "parsed_answer": "Au",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "In which year did humans first land on the Moon?",
+            "expected": "1969",
+            "parsed_answer": "1969",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "What is the largest mammal in the world?",
+            "expected": "Blue whale",
+            "parsed_answer": "Blue whale",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "How many sides does a hexagon have?",
+            "expected": "6",
+            "parsed_answer": "6",
+            "confidence": 0.95,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Brazil?",
+            "expected": "Brasilia",
+            "parsed_answer": "Jupiter",
+            "confidence": 0.65,
+            "correct": false
+          }
+        ],
+        "task": "qa_calibration",
+        "max_cycles": 5,
+        "agent": "baseline",
+        "duration_s": 0.0004303455352783203
+      },
+      "duration_s": 0.00084686279296875
+    },
+    {
+      "trial": 3,
+      "seed": 3,
+      "condition": "ablation:memory",
+      "metrics": {
+        "accuracy": 0.75,
+        "brier": 0.1315,
+        "ece": 0.14,
+        "n_questions": 20,
+        "n_parse_failures": 0
+      },
+      "details": {
+        "kind": "qa_calibration",
+        "seed": 3,
+        "via": "loop",
+        "questions": [
+          {
+            "question": "What is the capital of France?",
+            "expected": "Paris",
+            "answer": "Paris",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Japan?",
+            "expected": "Tokyo",
+            "answer": "Tokyo",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Australia?",
+            "expected": "Canberra",
+            "answer": "Canberra",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest planet in the solar system?",
+            "expected": "Jupiter",
+            "answer": "Jupiter",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical formula of water?",
+            "expected": "H2O",
+            "answer": "1969",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "Who wrote the novel 1984?",
+            "expected": "George Orwell",
+            "answer": "George Orwell",
+            "correct": true,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Canada?",
+            "expected": "Ottawa",
+            "answer": "1969",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "How many continents are there on Earth?",
+            "expected": "7",
+            "answer": "7",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "At what temperature does water boil at sea level, in degrees Celsius?",
+            "expected": "100",
+            "answer": "100",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the currency of the United Kingdom?",
+            "expected": "Pound sterling",
+            "answer": "Pound sterling",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest ocean on Earth?",
+            "expected": "Pacific Ocean",
+            "answer": "Blue whale",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "How many days are in a leap year?",
+            "expected": "366",
+            "answer": "366",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the smallest prime number?",
+            "expected": "2",
+            "answer": "2",
+            "correct": true,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "Which planet is known as the Red Planet?",
+            "expected": "Mars",
+            "answer": "Mars",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Egypt?",
+            "expected": "Cairo",
+            "answer": "100",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical symbol for gold?",
+            "expected": "Au",
+            "answer": "Au",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "In which year did humans first land on the Moon?",
+            "expected": "1969",
+            "answer": "1969",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the largest mammal in the world?",
+            "expected": "Blue whale",
+            "answer": "Blue whale",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "How many sides does a hexagon have?",
+            "expected": "6",
+            "answer": "6",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Brazil?",
+            "expected": "Brasilia",
+            "answer": "Jupiter",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          }
+        ],
+        "duration_s": 0.000545501708984375
+      },
+      "duration_s": 0.0032160282135009766
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "full",
+      "metrics": {
+        "accuracy": 0.7,
+        "brier": 0.1955,
+        "ece": 0.13,
+        "n_questions": 20,
+        "n_parse_failures": 0
+      },
+      "details": {
+        "kind": "qa_calibration",
+        "seed": 4,
+        "via": "loop",
+        "questions": [
+          {
+            "question": "What is the capital of France?",
+            "expected": "Paris",
+            "answer": "Paris",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Japan?",
+            "expected": "Tokyo",
+            "answer": "Tokyo",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Australia?",
+            "expected": "Canberra",
+            "answer": "Canberra",
+            "correct": true,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest planet in the solar system?",
+            "expected": "Jupiter",
+            "answer": "Jupiter",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical formula of water?",
+            "expected": "H2O",
+            "answer": "Tokyo",
+            "correct": false,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "Who wrote the novel 1984?",
+            "expected": "George Orwell",
+            "answer": "George Orwell",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Canada?",
+            "expected": "Ottawa",
+            "answer": "Ottawa",
+            "correct": true,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "How many continents are there on Earth?",
+            "expected": "7",
+            "answer": "Pound sterling",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "At what temperature does water boil at sea level, in degrees Celsius?",
+            "expected": "100",
+            "answer": "Paris",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the currency of the United Kingdom?",
+            "expected": "Pound sterling",
+            "answer": "Ottawa",
+            "correct": false,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest ocean on Earth?",
+            "expected": "Pacific Ocean",
+            "answer": "Pacific Ocean",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "How many days are in a leap year?",
+            "expected": "366",
+            "answer": "366",
+            "correct": true,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the smallest prime number?",
+            "expected": "2",
+            "answer": "2",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "Which planet is known as the Red Planet?",
+            "expected": "Mars",
+            "answer": "Mars",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Egypt?",
+            "expected": "Cairo",
+            "answer": "Cairo",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical symbol for gold?",
+            "expected": "Au",
+            "answer": "Au",
+            "correct": true,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "In which year did humans first land on the Moon?",
+            "expected": "1969",
+            "answer": "1969",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the largest mammal in the world?",
+            "expected": "Blue whale",
+            "answer": "Brasilia",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "How many sides does a hexagon have?",
+            "expected": "6",
+            "answer": "1969",
+            "correct": false,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Brazil?",
+            "expected": "Brasilia",
+            "answer": "Brasilia",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          }
+        ],
+        "duration_s": 0.0004968643188476562
+      },
+      "duration_s": 0.0040624141693115234
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "baseline",
+      "metrics": {
+        "accuracy": 0.75,
+        "brier": 0.1705,
+        "ece": 0.08000000000000002
+      },
+      "details": {
+        "kind": "qa_calibration",
+        "seed": 4,
+        "via": "baseline",
+        "n_questions": 20,
+        "provider_calls": 20,
+        "estimated_tokens": 728,
+        "fallback_dataset_used": false,
+        "per_item": [
+          {
+            "question": "What is the capital of France?",
+            "expected": "Paris",
+            "parsed_answer": "Paris",
+            "confidence": 0.65,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Japan?",
+            "expected": "Tokyo",
+            "parsed_answer": "Tokyo",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Australia?",
+            "expected": "Canberra",
+            "parsed_answer": "Canberra",
+            "confidence": 0.55,
+            "correct": true
+          },
+          {
+            "question": "Which is the largest planet in the solar system?",
+            "expected": "Jupiter",
+            "parsed_answer": "Jupiter",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "What is the chemical formula of water?",
+            "expected": "H2O",
+            "parsed_answer": "Tokyo",
+            "confidence": 0.75,
+            "correct": false
+          },
+          {
+            "question": "Who wrote the novel 1984?",
+            "expected": "George Orwell",
+            "parsed_answer": "George Orwell",
+            "confidence": 0.65,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Canada?",
+            "expected": "Ottawa",
+            "parsed_answer": "Ottawa",
+            "confidence": 0.75,
+            "correct": true
+          },
+          {
+            "question": "How many continents are there on Earth?",
+            "expected": "7",
+            "parsed_answer": "Pound sterling",
+            "confidence": 0.65,
+            "correct": false
+          },
+          {
+            "question": "At what temperature does water boil at sea level, in degrees Celsius?",
+            "expected": "100",
+            "parsed_answer": "Paris",
+            "confidence": 0.65,
+            "correct": false
+          },
+          {
+            "question": "What is the currency of the United Kingdom?",
+            "expected": "Pound sterling",
+            "parsed_answer": "Ottawa",
+            "confidence": 0.75,
+            "correct": false
+          },
+          {
+            "question": "Which is the largest ocean on Earth?",
+            "expected": "Pacific Ocean",
+            "parsed_answer": "Pacific Ocean",
+            "confidence": 0.65,
+            "correct": true
+          },
+          {
+            "question": "How many days are in a leap year?",
+            "expected": "366",
+            "parsed_answer": "366",
+            "confidence": 0.75,
+            "correct": true
+          },
+          {
+            "question": "What is the smallest prime number?",
+            "expected": "2",
+            "parsed_answer": "2",
+            "confidence": 0.95,
+            "correct": true
+          },
+          {
+            "question": "Which planet is known as the Red Planet?",
+            "expected": "Mars",
+            "parsed_answer": "Mars",
+            "confidence": 0.85,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Egypt?",
+            "expected": "Cairo",
+            "parsed_answer": "Cairo",
+            "confidence": 0.65,
+            "correct": true
+          },
+          {
+            "question": "What is the chemical symbol for gold?",
+            "expected": "Au",
+            "parsed_answer": "Au",
+            "confidence": 0.75,
+            "correct": true
+          },
+          {
+            "question": "In which year did humans first land on the Moon?",
+            "expected": "1969",
+            "parsed_answer": "1969",
+            "confidence": 0.95,
+            "correct": true
+          },
+          {
+            "question": "What is the largest mammal in the world?",
+            "expected": "Blue whale",
+            "parsed_answer": "Brasilia",
+            "confidence": 0.55,
+            "correct": false
+          },
+          {
+            "question": "How many sides does a hexagon have?",
+            "expected": "6",
+            "parsed_answer": "1969",
+            "confidence": 0.75,
+            "correct": true
+          },
+          {
+            "question": "What is the capital of Brazil?",
+            "expected": "Brasilia",
+            "parsed_answer": "Brasilia",
+            "confidence": 0.65,
+            "correct": true
+          }
+        ],
+        "task": "qa_calibration",
+        "max_cycles": 5,
+        "agent": "baseline",
+        "duration_s": 0.00048661231994628906
+      },
+      "duration_s": 0.0008332729339599609
+    },
+    {
+      "trial": 4,
+      "seed": 4,
+      "condition": "ablation:memory",
+      "metrics": {
+        "accuracy": 0.7,
+        "brier": 0.1955,
+        "ece": 0.13,
+        "n_questions": 20,
+        "n_parse_failures": 0
+      },
+      "details": {
+        "kind": "qa_calibration",
+        "seed": 4,
+        "via": "loop",
+        "questions": [
+          {
+            "question": "What is the capital of France?",
+            "expected": "Paris",
+            "answer": "Paris",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Japan?",
+            "expected": "Tokyo",
+            "answer": "Tokyo",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Australia?",
+            "expected": "Canberra",
+            "answer": "Canberra",
+            "correct": true,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest planet in the solar system?",
+            "expected": "Jupiter",
+            "answer": "Jupiter",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical formula of water?",
+            "expected": "H2O",
+            "answer": "Tokyo",
+            "correct": false,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "Who wrote the novel 1984?",
+            "expected": "George Orwell",
+            "answer": "George Orwell",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Canada?",
+            "expected": "Ottawa",
+            "answer": "Ottawa",
+            "correct": true,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "How many continents are there on Earth?",
+            "expected": "7",
+            "answer": "Pound sterling",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "At what temperature does water boil at sea level, in degrees Celsius?",
+            "expected": "100",
+            "answer": "Paris",
+            "correct": false,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the currency of the United Kingdom?",
+            "expected": "Pound sterling",
+            "answer": "Ottawa",
+            "correct": false,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "Which is the largest ocean on Earth?",
+            "expected": "Pacific Ocean",
+            "answer": "Pacific Ocean",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "How many days are in a leap year?",
+            "expected": "366",
+            "answer": "366",
+            "correct": true,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the smallest prime number?",
+            "expected": "2",
+            "answer": "2",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "Which planet is known as the Red Planet?",
+            "expected": "Mars",
+            "answer": "Mars",
+            "correct": true,
+            "confidence": 0.85,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Egypt?",
+            "expected": "Cairo",
+            "answer": "Cairo",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the chemical symbol for gold?",
+            "expected": "Au",
+            "answer": "Au",
+            "correct": true,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "In which year did humans first land on the Moon?",
+            "expected": "1969",
+            "answer": "1969",
+            "correct": true,
+            "confidence": 0.95,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the largest mammal in the world?",
+            "expected": "Blue whale",
+            "answer": "Brasilia",
+            "correct": false,
+            "confidence": 0.55,
+            "parse_ok": true
+          },
+          {
+            "question": "How many sides does a hexagon have?",
+            "expected": "6",
+            "answer": "1969",
+            "correct": false,
+            "confidence": 0.75,
+            "parse_ok": true
+          },
+          {
+            "question": "What is the capital of Brazil?",
+            "expected": "Brasilia",
+            "answer": "Brasilia",
+            "correct": true,
+            "confidence": 0.65,
+            "parse_ok": true
+          }
+        ],
+        "duration_s": 0.0004849433898925781
+      },
+      "duration_s": 0.0028710365295410156
+    }
+  ],
+  "summary": {
+    "conditions": {
+      "full": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "accuracy": {
+            "mean": 0.67,
+            "stdev": 0.09082951062292473,
+            "n": 5
+          },
+          "brier": {
+            "mean": 0.1987,
+            "stdev": 0.057316664243481565,
+            "n": 5
+          },
+          "ece": {
+            "mean": 0.145,
+            "stdev": 0.060930288034769686,
+            "n": 5
+          },
+          "n_questions": {
+            "mean": 20.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "n_parse_failures": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 5
+          }
+        }
+      },
+      "baseline": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "accuracy": {
+            "mean": 0.6900000000000001,
+            "stdev": 0.08215838362577493,
+            "n": 5
+          },
+          "brier": {
+            "mean": 0.1887,
+            "stdev": 0.049776500479644,
+            "n": 5
+          },
+          "ece": {
+            "mean": 0.125,
+            "stdev": 0.05086747487343948,
+            "n": 5
+          }
+        }
+      },
+      "ablation:memory": {
+        "n_trials_ok": 5,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "accuracy": {
+            "mean": 0.67,
+            "stdev": 0.09082951062292473,
+            "n": 5
+          },
+          "brier": {
+            "mean": 0.1987,
+            "stdev": 0.057316664243481565,
+            "n": 5
+          },
+          "ece": {
+            "mean": 0.145,
+            "stdev": 0.060930288034769686,
+            "n": 5
+          },
+          "n_questions": {
+            "mean": 20.0,
+            "stdev": 0.0,
+            "n": 5
+          },
+          "n_parse_failures": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 5
+          }
+        }
+      }
+    },
+    "delta_vs_baseline": {
+      "accuracy": -0.020000000000000018,
+      "brier": 0.009999999999999981,
+      "ece": 0.01999999999999999
+    }
+  }
+}

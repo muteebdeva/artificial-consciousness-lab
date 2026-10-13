@@ -1,0 +1,864 @@
+{
+  "name": "error_contradiction_detection",
+  "protocol_path": "/home/hatch/workspace/artificial-consciousness-lab/experiments/protocols/04_error_contradiction_detection.json",
+  "lab_version": "0.1.0",
+  "git_sha": null,
+  "seed": 0,
+  "started_at": 1791870510.5991511,
+  "finished_at": 1791870510.6997259,
+  "config_snapshot": {
+    "db_path": "./data/acl_mock.sqlite3",
+    "provider": "mock",
+    "provider_model": "",
+    "provider_params": {
+      "timeout_s": 30
+    },
+    "workspace_capacity": 7,
+    "budgets": {
+      "max_steps": 20,
+      "max_tokens": 8000,
+      "max_wall_time_s": 120.0,
+      "max_tool_calls": 10
+    },
+    "autonomous_enabled": true,
+    "approval_required_default": false,
+    "log_level": "INFO",
+    "seed": 42,
+    "results_dir": "experiments/results",
+    "components": {
+      "memory": true,
+      "self_model": true,
+      "workspace": true,
+      "metacognition": true,
+      "attention": true,
+      "learning": true
+    },
+    "extra": {}
+  },
+  "notes": [
+    "research_question: Can the architecture reliably detect when a newly introduced fact contradicts stored knowledge \u2014 distinguishing genuine contradictions from merely related-but-compatible statements \u2014 without silently overwriting either record?",
+    "hypothesis: The full architecture will achieve contradiction-detection F1 above 0.7 on the 6-pair battery (3 contradictory, 3 compatible), because the ContradictionDetector combines token-overlap with negation cues and numeric-mismatch checks, while the baseline (no metacognition, direct prompting) will be less consistent.",
+    "failure_condition: Fail if mean F1 is at or below 0.5 (majority-class baseline on a balanced battery), OR if any contradictory pair causes a silent overwrite (the old record disappears or is replaced without a supersedes link and audit entry), OR if the compatible pairs produce a false-positive rate above 0.5 (detector is just a 'flag everything' heuristic).",
+    "limitations: The detector is a documented heuristic (token overlap + negation cues), not natural-language understanding \u2014 paraphrased contradictions will evade it and superficially similar compatible statements may trigger it. Six pairs is a tiny battery; results are indicative, not conclusive. The pairs are fixed, so the system could in principle overfit to them across iterations of the codebase \u2014 the battery should be rotated in future versions."
+  ],
+  "trials": [
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "full",
+      "metrics": {
+        "precision": 1.0,
+        "recall": 0.6666666666666666,
+        "f1": 0.8,
+        "n_pairs": 6
+      },
+      "details": {
+        "kind": "contradiction_detection",
+        "seed": 0,
+        "via": "loop",
+        "pairs": [
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "The Eiffel Tower is in Berlin.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Water boils at 50 degrees Celsius at sea level.",
+            "contradictory": true,
+            "detected": true
+          },
+          {
+            "a": "The meeting is scheduled for Monday.",
+            "b": "The meeting is not scheduled for Monday.",
+            "contradictory": true,
+            "detected": true
+          },
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "Paris is the capital of France.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Ice melts at 0 degrees Celsius at sea level.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Cats are mammals.",
+            "b": "Dogs are mammals.",
+            "contradictory": false,
+            "detected": false
+          }
+        ],
+        "duration_s": 0.006525516510009766
+      },
+      "duration_s": 0.03794050216674805
+    },
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "baseline",
+      "metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 6,
+        "false_positive_rate": 0.0
+      },
+      "details": {
+        "kind": "contradiction_detection",
+        "seed": 0,
+        "via": "baseline",
+        "n_pairs": 6,
+        "provider_calls": 6,
+        "estimated_tokens": 349,
+        "fallback_dataset_used": false,
+        "per_item": [
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "The Eiffel Tower is in Berlin.",
+            "actual": true,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Water boils at 50 degrees Celsius at sea level.",
+            "actual": true,
+            "detected": false
+          },
+          {
+            "a": "The meeting is scheduled for Monday.",
+            "b": "The meeting is not scheduled for Monday.",
+            "actual": true,
+            "detected": false
+          },
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "Paris is the capital of France.",
+            "actual": false,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Ice melts at 0 degrees Celsius at sea level.",
+            "actual": false,
+            "detected": false
+          },
+          {
+            "a": "Cats are mammals.",
+            "b": "Dogs are mammals.",
+            "actual": false,
+            "detected": false
+          }
+        ],
+        "task": "contradiction_detection",
+        "max_cycles": 5,
+        "agent": "baseline",
+        "duration_s": 0.0002930164337158203
+      },
+      "duration_s": 0.0023093223571777344
+    },
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "ablation:metacognition",
+      "metrics": {
+        "precision": null,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n_pairs": 6
+      },
+      "details": {
+        "kind": "contradiction_detection",
+        "seed": 0,
+        "via": "loop",
+        "pairs": [
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "The Eiffel Tower is in Berlin.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Water boils at 50 degrees Celsius at sea level.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "The meeting is scheduled for Monday.",
+            "b": "The meeting is not scheduled for Monday.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "Paris is the capital of France.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Ice melts at 0 degrees Celsius at sea level.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Cats are mammals.",
+            "b": "Dogs are mammals.",
+            "contradictory": false,
+            "detected": false
+          }
+        ],
+        "duration_s": 0.004797935485839844
+      },
+      "duration_s": 0.008670568466186523
+    },
+    {
+      "trial": 0,
+      "seed": 0,
+      "condition": "ablation:memory",
+      "metrics": {
+        "precision": null,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n_pairs": 6
+      },
+      "details": {
+        "kind": "contradiction_detection",
+        "seed": 0,
+        "via": "loop",
+        "pairs": [
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "The Eiffel Tower is in Berlin.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Water boils at 50 degrees Celsius at sea level.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "The meeting is scheduled for Monday.",
+            "b": "The meeting is not scheduled for Monday.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "Paris is the capital of France.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Ice melts at 0 degrees Celsius at sea level.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Cats are mammals.",
+            "b": "Dogs are mammals.",
+            "contradictory": false,
+            "detected": false
+          }
+        ],
+        "duration_s": 0.0015273094177246094
+      },
+      "duration_s": 0.004460573196411133
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "full",
+      "metrics": {
+        "precision": 1.0,
+        "recall": 0.6666666666666666,
+        "f1": 0.8,
+        "n_pairs": 6
+      },
+      "details": {
+        "kind": "contradiction_detection",
+        "seed": 1,
+        "via": "loop",
+        "pairs": [
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "The Eiffel Tower is in Berlin.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Water boils at 50 degrees Celsius at sea level.",
+            "contradictory": true,
+            "detected": true
+          },
+          {
+            "a": "The meeting is scheduled for Monday.",
+            "b": "The meeting is not scheduled for Monday.",
+            "contradictory": true,
+            "detected": true
+          },
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "Paris is the capital of France.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Ice melts at 0 degrees Celsius at sea level.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Cats are mammals.",
+            "b": "Dogs are mammals.",
+            "contradictory": false,
+            "detected": false
+          }
+        ],
+        "duration_s": 0.006434202194213867
+      },
+      "duration_s": 0.00995016098022461
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "baseline",
+      "metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 6,
+        "false_positive_rate": 0.0
+      },
+      "details": {
+        "kind": "contradiction_detection",
+        "seed": 1,
+        "via": "baseline",
+        "n_pairs": 6,
+        "provider_calls": 6,
+        "estimated_tokens": 352,
+        "fallback_dataset_used": false,
+        "per_item": [
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "The Eiffel Tower is in Berlin.",
+            "actual": true,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Water boils at 50 degrees Celsius at sea level.",
+            "actual": true,
+            "detected": false
+          },
+          {
+            "a": "The meeting is scheduled for Monday.",
+            "b": "The meeting is not scheduled for Monday.",
+            "actual": true,
+            "detected": false
+          },
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "Paris is the capital of France.",
+            "actual": false,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Ice melts at 0 degrees Celsius at sea level.",
+            "actual": false,
+            "detected": false
+          },
+          {
+            "a": "Cats are mammals.",
+            "b": "Dogs are mammals.",
+            "actual": false,
+            "detected": false
+          }
+        ],
+        "task": "contradiction_detection",
+        "max_cycles": 5,
+        "agent": "baseline",
+        "duration_s": 0.00023317337036132812
+      },
+      "duration_s": 0.000507354736328125
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "ablation:metacognition",
+      "metrics": {
+        "precision": null,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n_pairs": 6
+      },
+      "details": {
+        "kind": "contradiction_detection",
+        "seed": 1,
+        "via": "loop",
+        "pairs": [
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "The Eiffel Tower is in Berlin.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Water boils at 50 degrees Celsius at sea level.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "The meeting is scheduled for Monday.",
+            "b": "The meeting is not scheduled for Monday.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "Paris is the capital of France.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Ice melts at 0 degrees Celsius at sea level.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Cats are mammals.",
+            "b": "Dogs are mammals.",
+            "contradictory": false,
+            "detected": false
+          }
+        ],
+        "duration_s": 0.005195140838623047
+      },
+      "duration_s": 0.008875846862792969
+    },
+    {
+      "trial": 1,
+      "seed": 1,
+      "condition": "ablation:memory",
+      "metrics": {
+        "precision": null,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n_pairs": 6
+      },
+      "details": {
+        "kind": "contradiction_detection",
+        "seed": 1,
+        "via": "loop",
+        "pairs": [
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "The Eiffel Tower is in Berlin.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Water boils at 50 degrees Celsius at sea level.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "The meeting is scheduled for Monday.",
+            "b": "The meeting is not scheduled for Monday.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "Paris is the capital of France.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Ice melts at 0 degrees Celsius at sea level.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Cats are mammals.",
+            "b": "Dogs are mammals.",
+            "contradictory": false,
+            "detected": false
+          }
+        ],
+        "duration_s": 0.0014460086822509766
+      },
+      "duration_s": 0.004029035568237305
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "full",
+      "metrics": {
+        "precision": 1.0,
+        "recall": 0.6666666666666666,
+        "f1": 0.8,
+        "n_pairs": 6
+      },
+      "details": {
+        "kind": "contradiction_detection",
+        "seed": 2,
+        "via": "loop",
+        "pairs": [
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "The Eiffel Tower is in Berlin.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Water boils at 50 degrees Celsius at sea level.",
+            "contradictory": true,
+            "detected": true
+          },
+          {
+            "a": "The meeting is scheduled for Monday.",
+            "b": "The meeting is not scheduled for Monday.",
+            "contradictory": true,
+            "detected": true
+          },
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "Paris is the capital of France.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Ice melts at 0 degrees Celsius at sea level.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Cats are mammals.",
+            "b": "Dogs are mammals.",
+            "contradictory": false,
+            "detected": false
+          }
+        ],
+        "duration_s": 0.006143808364868164
+      },
+      "duration_s": 0.009843587875366211
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "baseline",
+      "metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 6,
+        "false_positive_rate": 0.0
+      },
+      "details": {
+        "kind": "contradiction_detection",
+        "seed": 2,
+        "via": "baseline",
+        "n_pairs": 6,
+        "provider_calls": 6,
+        "estimated_tokens": 346,
+        "fallback_dataset_used": false,
+        "per_item": [
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "The Eiffel Tower is in Berlin.",
+            "actual": true,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Water boils at 50 degrees Celsius at sea level.",
+            "actual": true,
+            "detected": false
+          },
+          {
+            "a": "The meeting is scheduled for Monday.",
+            "b": "The meeting is not scheduled for Monday.",
+            "actual": true,
+            "detected": false
+          },
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "Paris is the capital of France.",
+            "actual": false,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Ice melts at 0 degrees Celsius at sea level.",
+            "actual": false,
+            "detected": false
+          },
+          {
+            "a": "Cats are mammals.",
+            "b": "Dogs are mammals.",
+            "actual": false,
+            "detected": false
+          }
+        ],
+        "task": "contradiction_detection",
+        "max_cycles": 5,
+        "agent": "baseline",
+        "duration_s": 0.00026869773864746094
+      },
+      "duration_s": 0.00048065185546875
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "ablation:metacognition",
+      "metrics": {
+        "precision": null,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n_pairs": 6
+      },
+      "details": {
+        "kind": "contradiction_detection",
+        "seed": 2,
+        "via": "loop",
+        "pairs": [
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "The Eiffel Tower is in Berlin.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Water boils at 50 degrees Celsius at sea level.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "The meeting is scheduled for Monday.",
+            "b": "The meeting is not scheduled for Monday.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "Paris is the capital of France.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Ice melts at 0 degrees Celsius at sea level.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Cats are mammals.",
+            "b": "Dogs are mammals.",
+            "contradictory": false,
+            "detected": false
+          }
+        ],
+        "duration_s": 0.005562782287597656
+      },
+      "duration_s": 0.009201765060424805
+    },
+    {
+      "trial": 2,
+      "seed": 2,
+      "condition": "ablation:memory",
+      "metrics": {
+        "precision": null,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n_pairs": 6
+      },
+      "details": {
+        "kind": "contradiction_detection",
+        "seed": 2,
+        "via": "loop",
+        "pairs": [
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "The Eiffel Tower is in Berlin.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Water boils at 50 degrees Celsius at sea level.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "The meeting is scheduled for Monday.",
+            "b": "The meeting is not scheduled for Monday.",
+            "contradictory": true,
+            "detected": false
+          },
+          {
+            "a": "The Eiffel Tower is in Paris.",
+            "b": "Paris is the capital of France.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Water boils at 100 degrees Celsius at sea level.",
+            "b": "Ice melts at 0 degrees Celsius at sea level.",
+            "contradictory": false,
+            "detected": false
+          },
+          {
+            "a": "Cats are mammals.",
+            "b": "Dogs are mammals.",
+            "contradictory": false,
+            "detected": false
+          }
+        ],
+        "duration_s": 0.0015211105346679688
+      },
+      "duration_s": 0.0038690567016601562
+    }
+  ],
+  "summary": {
+    "conditions": {
+      "full": {
+        "n_trials_ok": 3,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "precision": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "n": 3
+          },
+          "recall": {
+            "mean": 0.6666666666666666,
+            "stdev": 0.0,
+            "n": 3
+          },
+          "f1": {
+            "mean": 0.8000000000000002,
+            "stdev": 1.3597399555105182e-16,
+            "n": 3
+          },
+          "n_pairs": {
+            "mean": 6.0,
+            "stdev": 0.0,
+            "n": 3
+          }
+        }
+      },
+      "baseline": {
+        "n_trials_ok": 3,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "precision": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 3
+          },
+          "recall": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 3
+          },
+          "f1": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 3
+          },
+          "n": {
+            "mean": 6.0,
+            "stdev": 0.0,
+            "n": 3
+          },
+          "false_positive_rate": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 3
+          }
+        }
+      },
+      "ablation:metacognition": {
+        "n_trials_ok": 3,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "precision": {
+            "mean": null,
+            "stdev": null,
+            "n": 3
+          },
+          "recall": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 3
+          },
+          "f1": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 3
+          },
+          "n_pairs": {
+            "mean": 6.0,
+            "stdev": 0.0,
+            "n": 3
+          }
+        }
+      },
+      "ablation:memory": {
+        "n_trials_ok": 3,
+        "n_errors": 0,
+        "errors": [],
+        "metrics": {
+          "precision": {
+            "mean": null,
+            "stdev": null,
+            "n": 3
+          },
+          "recall": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 3
+          },
+          "f1": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "n": 3
+          },
+          "n_pairs": {
+            "mean": 6.0,
+            "stdev": 0.0,
+            "n": 3
+          }
+        }
+      }
+    },
+    "delta_vs_baseline": {
+      "precision": 1.0,
+      "recall": 0.6666666666666666,
+      "f1": 0.8000000000000002
+    }
+  }
+}
